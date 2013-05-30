@@ -32,7 +32,7 @@ InitGLClass::InitGLClass()
 		Init=false;
 	}
 	monitor = glfwGetPrimaryMonitor();
-	vidmode = glfwGetVideoMode (monitor);
+	vidmode = (GLFWvidmode*)glfwGetVideoMode (monitor);
 	Init=true;
 	log.WriteLog("InitGLClass() OK");
 }
@@ -50,7 +50,7 @@ std::vector<const char*> InitGLClass::GetErrLog()
 int InitGLClass::InitGL(const char* title, int width, int height)
 {
 	if (Init==false)
-		InitGLClass();
+		return 1;
 	if (window !=nullptr)
 	{
 		log.WriteLog("Add errlog");
@@ -78,7 +78,7 @@ int InitGLClass::InitGL(const char* title)
 	if (Init==false)
 		return GLFW_INIT_ERROR;
 	glewExperimental=true;
-	window = glfwCreateWindow(vidmode.width, vidmode.height, title, monitor, NULL);
+	window = glfwCreateWindow(vidmode->width, vidmode->height, title, monitor, NULL);
 	glfwMakeContextCurrent(window);
 	GLenum GlewInitResult = glewInit();
 	if (GLEW_OK!=GlewInitResult)
@@ -94,11 +94,8 @@ int InitGLClass::InitGL(const char* title)
 
 void InitGLClass::SetHint(std::initializer_list<int> args)
 {
-	for (auto p=args.begin(); p!=args.end(); ++p) 
-	{
+	for (auto p=args.begin(); p!=args.end(); p+=2) 
 		glfwWindowHint(*p,*(p+1));
-		p++;
-	}
 }
 
 void InitGLClass::SetHint()
@@ -187,7 +184,6 @@ void InitGLClass::DestroyGL()
 		if (window!=nullptr)
 			glfwDestroyWindow(window);
 		glfwTerminate();
-		InitGLClass();
 	}
 }
 
@@ -201,4 +197,60 @@ InitGLClass::~InitGLClass()
 	}
 	log.ClearLog();
 	errlog.ClearLog();
+}
+
+InitCLClass::InitCLClass()
+{
+	log.ClearLog();
+	errlog.ClearLog();
+	numContexts=0;
+	numPropereties=0;
+	parent = nullptr;
+}
+
+bool InitCLClass::ErrCLFunc(cl_int err,const char* str)
+{
+	if (err!=CL_SUCCESS)
+	{
+		std::stringstream tmp;
+		tmp<<str<<err;
+		log.WriteLog("Add errlog");
+		errlog.WriteLog(tmp.str().c_str());
+		return 1;
+	} else return 0;
+}
+
+int InitCLClass::InitCL(InitGLClass* ingl)
+{
+	bool err;
+	parent=ingl;
+	cl_uint numPlatforms;
+	err=ErrCLFunc(clGetPlatformIDs(0, NULL, &numPlatforms),"InitCL clGetPlatformIDs error: ");
+	if (err==0) return 1;
+	if (numPlatforms==0)
+	{
+		log.WriteLog("Add errlog");
+		errlog.WriteLog("No platform found");
+		return 1;
+	}
+	cl_platform_id* pltmp = new cl_platform_id[numPlatforms];
+	clGetPlatformIDs(numPlatforms, pltmp, NULL);
+	for (cl_uint i=0; i<numPlatforms; i++)
+		platforms.push_back(pltmp[i]);
+	delete [] pltmp;
+	for (auto i = platforms.begin(); i<platforms.end(); i++)
+	{
+		cl_uint numDevices;
+		err=ErrCLFunc( clGetDeviceIDs(*i, CL_DEVICE_TYPE_ALL, 0, NULL, &numDevices),"InitCL clGetDeviceIDs error: ");
+		if (err==0) return 1;
+		cl_device_id* dvtmp = new cl_device_id[numDevices];
+		clGetDeviceIDs(*i, CL_DEVICE_TYPE_ALL, numDevices, dvtmp, NULL);
+		EngDevice edvtmp;
+		edvtmp.parent_platform = &(*i);
+		for (cl_uint j = 0; j<numDevices; j++)
+			edvtmp.devices.push_back(dvtmp[j]);
+		devices.push_back(edvtmp);
+		delete [] dvtmp;
+	}
+	return 0;
 }

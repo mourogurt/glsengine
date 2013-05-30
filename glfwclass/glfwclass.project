@@ -23,11 +23,12 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-O0;-Wall;-std=c++11;$(shell  pkg-config --cflags glfw3)" C_Options="-g;-O0;-Wall;$(shell  pkg-config --cflags glfw3)" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+      <Compiler Options="-g;-O0;-Wall;-std=c++11;" C_Options="-g;-O0;-Wall;" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="."/>
         <IncludePath Value="/opt/AMDAPP/include"/>
+        <IncludePath Value="/usr/local/GLFW"/>
       </Compiler>
-      <Linker Options="$(shell  pkg-config --libs glfw3);-L/usr/X11R6/lib" Required="yes">
+      <Linker Options="-L/usr/X11R6/lib" Required="yes">
         <LibraryPath Value="/usr/lib/fglrx"/>
         <Library Value="X11"/>
         <Library Value="GLEW"/>
@@ -35,6 +36,7 @@
         <Library Value="GL"/>
         <Library Value="Xext"/>
         <Library Value="OpenCL"/>
+        <Library Value="glfw"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
@@ -42,6 +44,7 @@
         <![CDATA[]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <DebuggerSearchPaths/>
         <PostConnectCommands/>
         <StartupCommands/>
       </Debugger>
@@ -79,6 +82,7 @@
         <![CDATA[]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <DebuggerSearchPaths/>
         <PostConnectCommands/>
         <StartupCommands/>
       </Debugger>

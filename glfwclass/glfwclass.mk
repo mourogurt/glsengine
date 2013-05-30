@@ -13,7 +13,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=maxis11
-Date                   :=05/14/13
+Date                   :=05/30/13
 CodeLitePath           :="/home/maxis11/.codelite"
 LinkerName             :=g++
 SharedObjectLinkerName :=g++ -shared -fPIC
@@ -35,12 +35,12 @@ PreprocessOnlySwitch   :=-E
 ObjectsFileList        :="glfwclass.txt"
 PCHCompileFlags        :=
 MakeDirCommand         :=mkdir -p
-LinkOptions            :=  $(shell  pkg-config --libs glfw3) -L/usr/X11R6/lib
-IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch). $(IncludeSwitch)/opt/AMDAPP/include 
+LinkOptions            :=  -L/usr/X11R6/lib
+IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch). $(IncludeSwitch)/opt/AMDAPP/include $(IncludeSwitch)/usr/local/GLFW 
 IncludePCH             := 
 RcIncludePath          := 
-Libs                   := $(LibrarySwitch)X11 $(LibrarySwitch)GLEW $(LibrarySwitch)GLU $(LibrarySwitch)GL $(LibrarySwitch)Xext $(LibrarySwitch)OpenCL 
-ArLibs                 :=  "X11" "GLEW" "GLU" "GL" "Xext" "OpenCL" 
+Libs                   := $(LibrarySwitch)X11 $(LibrarySwitch)GLEW $(LibrarySwitch)GLU $(LibrarySwitch)GL $(LibrarySwitch)Xext $(LibrarySwitch)OpenCL $(LibrarySwitch)glfw 
+ArLibs                 :=  "X11" "GLEW" "GLU" "GL" "Xext" "OpenCL" "glfw" 
 LibPath                := $(LibraryPathSwitch). $(LibraryPathSwitch)/usr/lib/fglrx 
 
 ##
@@ -50,8 +50,8 @@ LibPath                := $(LibraryPathSwitch). $(LibraryPathSwitch)/usr/lib/fgl
 AR       := ar rcus
 CXX      := g++
 CC       := gcc
-CXXFLAGS :=  -g -O0 -Wall -std=c++11 $(shell  pkg-config --cflags glfw3) $(Preprocessors)
-CFLAGS   :=  -g -O0 -Wall $(shell  pkg-config --cflags glfw3) $(Preprocessors)
+CXXFLAGS :=  -g -O0 -Wall -std=c++11  $(Preprocessors)
+CFLAGS   :=  -g -O0 -Wall  $(Preprocessors)
 
 
 ##

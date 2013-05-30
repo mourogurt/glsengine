@@ -2,13 +2,12 @@
 #define GL_ENG_INIT
 #define GLFW_INCLUDE_GLU
 #include <GL/glew.h>
-#include <GL/glfw3.h>
+#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <CL/cl.h>
-#include <iostream>
 #include <cstdlib>
 #include <vector>
-#include <functional>
+#include <sstream>
 
 using namespace glm;
 
@@ -127,27 +126,38 @@ public:
 	~InitGLClass();
 private:
 	bool Init;
-	GLFWvidmode vidmode;
+	GLFWvidmode* vidmode;
 	GLFWmonitor* monitor;
 	GLFWwindow* window;
 	EngLog log;
 	EngLog errlog;
 };
 
+struct EngDevice
+{ 
+	cl_platform_id* parent_platform;
+	std::vector<cl_device_id> devices;
+};
+
 class InitCLClass
 {
 public:
-	int InitCL(InitGLClass);
-	InitGLClass InitCL();
+	int InitCL(InitGLClass*);
 	InitCLClass ();
 	std::vector<const char*> GetLog();
+	std::vector<const char*> GetErrLog();
 	~InitCLClass();
 private:
+	bool ErrCLFunc (cl_int,const char*);
 	EngLog log;
-	cl_uint numPlatforms;
-	cl_uint numDevices
+	EngLog errlog;
+	cl_uint numContexts;
+	cl_uint numPropereties;
+	std::vector<cl_uint> numDevices;
+	std::vector<cl_context_properties[4]> propereties;
 	std::vector<cl_platform_id> platforms;
-	std::vector<cl_device_id> devices;
-	cl_context context;
+	std::vector<EngDevice> devices;
+	std::vector<cl_context> context;
+	InitGLClass* parent;
 };
 #endif
