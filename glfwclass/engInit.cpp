@@ -219,9 +219,9 @@ int EngInit::Init(const char* title, int width, int height)
 		glfwDestroyWindow(window);
 		return GLEW_INIT_ERROR;
 	}
+	GLInit = true;
 	log.WriteLog("Init(const char*,int,int) OK");
 	return ENG_INIT_OK;
-	GLInit = true;
 }
 
 void EngInit::Destroy()
