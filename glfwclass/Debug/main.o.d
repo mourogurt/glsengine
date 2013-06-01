@@ -1,5 +1,6 @@
 Debug/main.o: main.cpp engInit.hpp /opt/AMDAPP/include/GL/glew.h \
- /opt/AMDAPP/include/CL/cl.h /opt/AMDAPP/include/CL/cl_platform.h
+ /opt/AMDAPP/include/CL/cl.h /opt/AMDAPP/include/CL/cl_platform.h \
+ /opt/AMDAPP/include/CL/cl_gl.h
 
 engInit.hpp:
 
@@ -8,3 +9,5 @@ engInit.hpp:
 /opt/AMDAPP/include/CL/cl.h:
 
 /opt/AMDAPP/include/CL/cl_platform.h:
+
+/opt/AMDAPP/include/CL/cl_gl.h:

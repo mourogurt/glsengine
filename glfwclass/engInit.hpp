@@ -1,20 +1,30 @@
 #ifndef GL_ENG_INIT
 #define GL_ENG_INIT
 #define GLFW_INCLUDE_GLU
+#define GL_GLEXT_PROTOTYPES
+#define GLX_GLXEXT_PROTOTYPES
 #include <GL/glew.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/glx.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <CL/cl.h>
+#include <CL/cl_gl.h>
 #include <cstdlib>
 #include <vector>
 #include <sstream>
 
 using namespace glm;
 
-#define ENG_INIT_OK 0;
+#define ENG_INIT_OK 0
 #define GLFW_INIT_ERROR 1
 #define GLEW_INIT_ERROR 2
 #define GLFW_CREATE_WINDOW_ERROR 3
+#define ENG_UNKNOW_PLATFORM 4
+#define ENG_CONTEXT_ERROR 5
+
+typedef void (*ENG_CL_CALLBACK)(const char *, const void *, size_t, void *);
 
 class EngLog
 {
@@ -97,12 +107,29 @@ struct EngMonitorFunct
 	GLFWmonitorfun func;
 };
 
-class InitGLClass
+struct EngContextFunct
+{
+	ENG_CL_CALLBACK func;
+};
+
+struct EngPlatform
+{
+	GLFWwindow* window;
+	cl_platform_id* parent_platform;
+	cl_device_id* devices;
+	cl_uint numDevices;
+	cl_context context;
+};
+
+class EngInit
 {
 public:
-	InitGLClass();
-	int InitGL(const char*);
-	int InitGL(const char*,int,int);
+	EngInit();
+	int Init (const char* title, int width = 0, int height = 0);
+	cl_uint GetNumPlatforms ();
+	cl_int CreateContext (int);
+	EngPlatform* GetEngPlatform (int);
+	int DestroyContext (int);
 	void SetCallback (EngErrFunct);
 	void SetCallback (EngWinPosFunct);
 	void SetCallback (EngWinSizeFunct);
@@ -117,47 +144,27 @@ public:
 	void SetCallback (EngKeyFunct);
 	void SetCallback (EngCharFunct);
 	void SetCallback (EngMonitorFunct);
+	void SetCallback (EngContextFunct, void*);
 	std::vector<const char*> GetLog();
 	std::vector<const char*> GetErrLog();
-	GLFWwindow* GetWindow();  //remove later
+	void ClearLog();
+	void ClearErrLog();
 	void SetHint (std::initializer_list<int>);
 	void SetHint ();
-	void DestroyGL();
-	~InitGLClass();
+	void Destroy();
 private:
-	bool Init;
+	int ErrFunc (int,const char*);
+	bool GLInit;
+	bool CLInit;
 	GLFWvidmode* vidmode;
 	GLFWmonitor* monitor;
 	GLFWwindow* window;
 	EngLog log;
 	EngLog errlog;
-};
-
-struct EngDevice
-{ 
-	cl_platform_id* parent_platform;
-	std::vector<cl_device_id> devices;
-};
-
-class InitCLClass
-{
-public:
-	int InitCL(InitGLClass*);
-	InitCLClass ();
-	std::vector<const char*> GetLog();
-	std::vector<const char*> GetErrLog();
-	~InitCLClass();
-private:
-	bool ErrCLFunc (cl_int,const char*);
-	EngLog log;
-	EngLog errlog;
-	cl_uint numContexts;
-	cl_uint numPropereties;
-	std::vector<cl_uint> numDevices;
-	std::vector<cl_context_properties[4]> propereties;
-	std::vector<cl_platform_id> platforms;
-	std::vector<EngDevice> devices;
-	std::vector<cl_context> context;
-	InitGLClass* parent;
+	cl_uint numPlatforms;
+	std::vector<EngPlatform> platforms;
+	EngContextFunct funct;
+	void* usr_data;
+	cl_platform_id* pltmp;
 };
 #endif

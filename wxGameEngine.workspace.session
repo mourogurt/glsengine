@@ -1,24 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Session Name="/home/maxis11/projects/wxGameEngine/wxGameEngine.workspace">
-  <int Value="1" Name="m_selectedTab"/>
+  <int Value="5" Name="m_selectedTab"/>
   <wxString Value="/home/maxis11/projects/wxGameEngine/wxGameEngine.workspace" Name="m_workspaceName"/>
   <TabInfoArray Name="TabInfoArray">
     <TabInfo>
       <wxString Value="/home/maxis11/projects/wxGameEngine/glfwclass/engInit.hpp" Name="FileName"/>
-      <int Value="134" Name="FirstVisibleLine"/>
-      <int Value="149" Name="CurrentLine"/>
+      <int Value="0" Name="FirstVisibleLine"/>
+      <int Value="11" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
     </TabInfo>
     <TabInfo>
       <wxString Value="/home/maxis11/projects/wxGameEngine/glfwclass/engInit.cpp" Name="FileName"/>
-      <int Value="126" Name="FirstVisibleLine"/>
-      <int Value="199" Name="CurrentLine"/>
+      <int Value="229" Name="FirstVisibleLine"/>
+      <int Value="236" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
     </TabInfo>
     <TabInfo>
       <wxString Value="/home/maxis11/projects/wxGameEngine/glfwclass/main.cpp" Name="FileName"/>
-      <int Value="12" Name="FirstVisibleLine"/>
-      <int Value="18" Name="CurrentLine"/>
+      <int Value="0" Name="FirstVisibleLine"/>
+      <int Value="24" Name="CurrentLine"/>
+      <wxArrayString Name="Bookmarks"/>
+    </TabInfo>
+    <TabInfo>
+      <wxString Value="/home/maxis11/glfw/src/init.c" Name="FileName"/>
+      <int Value="127" Name="FirstVisibleLine"/>
+      <int Value="170" Name="CurrentLine"/>
+      <wxArrayString Name="Bookmarks"/>
+    </TabInfo>
+    <TabInfo>
+      <wxString Value="/home/maxis11/glfw/src/x11_init.c" Name="FileName"/>
+      <int Value="646" Name="FirstVisibleLine"/>
+      <int Value="588" Name="CurrentLine"/>
+      <wxArrayString Name="Bookmarks"/>
+    </TabInfo>
+    <TabInfo>
+      <wxString Value="/home/maxis11/projects/wxGameEngine/testXapp/main.cpp" Name="FileName"/>
+      <int Value="0" Name="FirstVisibleLine"/>
+      <int Value="16" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
     </TabInfo>
   </TabInfoArray>
