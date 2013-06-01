@@ -1,6 +1,7 @@
 #include "engInit.hpp"
 #include <cstdio>
 #include <iostream>
+#include <fstream>
 
 void error_callback	(int error, const char* description)
 {
@@ -29,6 +30,36 @@ int main(int argc, char **argv)
 	for (auto p = log.begin(); p!=log.end(); ++p)
 		std::cout<<'\t'<<*p<<std::endl;
 	initclgl.ClearLog();
+	cl_command_queue command_queue = NULL;
+	cl_mem memobj = NULL;
+	cl_program program = NULL;
+	cl_kernel kernel = NULL;
+	char outstr[14];
+	std::string str;
+	std::ifstream in;
+	in.open("./hello.cl");
+	std::getline(in,str,'\0');
+	in.close();
+	cl_int ret;
+	command_queue = clCreateCommandQueue(MainPlatform->context, MainPlatform->devices[0], 0, NULL);	
+	memobj = clCreateBuffer(MainPlatform->context, CL_MEM_READ_WRITE,14 * sizeof(char), NULL, NULL);
+	char* buff = (char*) str.c_str();
+	size_t size = str.size();
+	program = clCreateProgramWithSource(MainPlatform->context, 1, (const char**)&buff,&size, &ret);
+	if (ret!=CL_SUCCESS)
+		std::cerr<<"Something gonna wrong\n";
+	ret = clBuildProgram(program, 1, & MainPlatform->devices[0], NULL, NULL, NULL);
+	kernel = clCreateKernel(program, "hello", &ret);
+	ret = clSetKernelArg(kernel, 0, sizeof(cl_mem), (void *)&memobj);
+	ret = clEnqueueTask(command_queue, kernel, 0, NULL,NULL);
+	ret = clEnqueueReadBuffer(command_queue, memobj, CL_TRUE, 0,14 * sizeof(char),outstr, 0, NULL, NULL);
+	std::cout<<outstr<<std::endl;
+	ret = clFlush(command_queue);
+	ret = clFinish(command_queue);
+	ret = clReleaseKernel(kernel);
+	ret = clReleaseProgram(program);
+	ret = clReleaseMemObject(memobj);
+	ret = clReleaseCommandQueue(command_queue);
 	glClearColor(0.0f,0.0f,1.0f, 0.0f);
 	while (glfwGetKey(MainPlatform->window,GLFW_KEY_ESC) != GLFW_PRESS)
 	{

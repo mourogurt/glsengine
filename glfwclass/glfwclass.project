@@ -11,6 +11,7 @@
     <File Name="main.cpp"/>
     <File Name="engInit.hpp"/>
     <File Name="engInit.cpp"/>
+    <File Name="hello.cl"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
@@ -110,4 +111,6 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Release"/>
 </CodeLite_Project>

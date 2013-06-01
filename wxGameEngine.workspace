@@ -2,17 +2,14 @@
 <CodeLite_Workspace Name="wxGameEngine" Database="./wxGameEngine.tags">
   <Project Name="wxGameEngine" Path="wxGameEngine.project" Active="No"/>
   <Project Name="glfwclass" Path="glfwclass/glfwclass.project" Active="Yes"/>
-  <Project Name="testXapp" Path="testXapp/testXapp.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Project Name="wxGameEngine" ConfigName="Debug"/>
       <Project Name="glfwclass" ConfigName="Debug"/>
-      <Project Name="testXapp" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Project Name="wxGameEngine" ConfigName="Release"/>
       <Project Name="glfwclass" ConfigName="Release"/>
-      <Project Name="testXapp" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

@@ -87,4 +87,6 @@
     <File Name="wxMainWindow.cpp"/>
     <File Name="wxMainWindow.hpp"/>
   </VirtualDirectory>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Release"/>
 </CodeLite_Project>
