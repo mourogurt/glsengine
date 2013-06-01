@@ -298,7 +298,12 @@ EngPlatform* EngInit::GetEngPlatform(int num)
 int EngInit::DestroyContext(int num)
 {
 	if (platforms.at(num).context != 0)
-		clReleaseContext(platforms.at(num).context);
+	{
+		cl_int err;
+		err = clReleaseContext(platforms.at(num).context);
+		platforms.at(num).context = 0;
+		return err;
+	}
 	else
 	{
 		ErrFunc(ENG_CONTEXT_ERROR,"clReleaseContext error: ");
