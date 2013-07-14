@@ -7,9 +7,10 @@ struct EngModel
     GLuint vertexID;
     GLuint vertexBuffer;
     GLfloat *vertex_data;
+    GLuint size_data;
 };
 
-typedef EngModel (*ENG_LOAD_MODEL) (void*);
+typedef EngModel (*ENG_LOAD_MODEL) (void*, const char*);
 
 struct EngLoadModelFunct
 {
@@ -20,9 +21,9 @@ class EngModelArray
 {
 public:
     EngModelArray();
-    void* loadModel(EngLoadModelFunct);
+    void* loadModel(EngLoadModelFunct, const char*);
     EngModel* getModel(int);
-    void clearArray();
+    void Destroy();
 private:
     std::vector<EngModel> models;
 };
