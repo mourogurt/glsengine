@@ -22,6 +22,7 @@ public:
     EngModelArray();
     void* loadModel(EngLoadModelFunct);
     EngModel* getModel(int);
+    void clearArray();
 private:
     std::vector<EngModel> models;
 };
