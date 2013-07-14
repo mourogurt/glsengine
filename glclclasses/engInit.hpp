@@ -1,5 +1,5 @@
-#ifndef GL_ENG_INIT
-#define GL_ENG_INIT
+#ifndef ENGINIT_HPP
+#define ENGINIT_HPP
 #define GLFW_INCLUDE_GLU
 #define GL_GLEXT_PROTOTYPES
 #define GLX_GLXEXT_PROTOTYPES

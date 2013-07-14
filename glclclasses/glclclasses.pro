@@ -4,7 +4,8 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += main.cpp \
-    engInit.cpp
+    engInit.cpp \
+    engModel.cpp
 
 QMAKE_CXXFLAGS += -std=c++11
 unix: CONFIG += link_pkgconfig
@@ -15,10 +16,11 @@ unix: PKGCONFIG += glu
 
 
 HEADERS += \
-    engInit.hpp
+    engInit.hpp \
+    engModel.hpp
 
 unix|win32: LIBS += -lOpenCL
-unix:!macx: LIBS += -lpthread
+unix|macx: LIBS += -lpthread
 
 OTHER_FILES += \
     hello.cl

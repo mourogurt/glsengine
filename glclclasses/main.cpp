@@ -1,14 +1,15 @@
 #include "engInit.hpp"
+#include "engModel.hpp"
 #include <cstdio>
 #include <iostream>
 #include <fstream>
 
 void error_callback	(int error, const char* description)
 {
-    fputs(description, stderr);
+    std::cerr<<description<<" "<<error<<std::endl;
 }
 
-int main(int argc, char **argv)
+int main()
 {
     std::vector<const char*> log;
     EngInit initclgl;
