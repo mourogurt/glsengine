@@ -5,7 +5,8 @@ CONFIG -= qt
 
 SOURCES += main.cpp \
     engInit.cpp \
-    engModel.cpp
+    engModel.cpp \
+    engCompute.cpp
 
 QMAKE_CXXFLAGS += -std=c++11
 unix: CONFIG += link_pkgconfig
@@ -17,10 +18,12 @@ unix: PKGCONFIG += glu
 
 HEADERS += \
     engInit.hpp \
-    engModel.hpp
+    engModel.hpp \
+    engCompute.hpp
 
 unix|win32: LIBS += -lOpenCL
 unix|macx: LIBS += -lpthread
 
 OTHER_FILES += \
-    hello.cl
+    hello.cl \
+    testModel
