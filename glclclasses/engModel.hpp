@@ -11,10 +11,16 @@ struct EngModel
 };
 
 typedef EngModel (*ENG_LOAD_MODEL) (void*, const char*);
+typedef EngModel (*ENG_GEN_MODEL) (void*,void*);
 
 struct EngLoadModelFunct
 {
     ENG_LOAD_MODEL func;
+};
+
+struct EngGenModelFunct
+{
+    ENG_GEN_MODEL func;
 };
 
 class EngModelArray
@@ -22,6 +28,7 @@ class EngModelArray
 public:
     EngModelArray();
     void* loadModel(EngLoadModelFunct, const char*);
+    void* genModel(EngGenModelFunct,void*);
     EngModel* getModel(int);
     void Destroy();
 private:

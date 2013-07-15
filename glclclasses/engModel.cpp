@@ -14,6 +14,15 @@ void* EngModelArray::loadModel(EngLoadModelFunct funct, const char* pth)
     return data;
 }
 
+void* EngModelArray::genModel(EngGenModelFunct funct, void* in)
+{
+    void* data = NULL;
+    EngModel tmpmodel;
+    tmpmodel = funct.func(data,in);
+    models.push_back(tmpmodel);
+    return data;
+}
+
 EngModel* EngModelArray::getModel(int n)
 {
     return &(models[n]);
