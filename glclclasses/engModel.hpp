@@ -31,8 +31,11 @@ public:
     void* genModel(EngGenModelFunct,void*);
     EngModel* getModel(int);
     void destroy();
+    std::vector<const char*> getLog();
+    void clearLog();
 private:
     std::vector<EngModel> models;
+    EngLog log;
 };
 
 //typedef ()

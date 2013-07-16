@@ -1,15 +1,12 @@
 // Include standard headers
-#include <stdio.h>
-#include <stdlib.h>
 #include <iostream>
+#include <fstream>
 
 #include "engInit.hpp"
 #include "engModel.hpp"
 
 EngModel gen_model (void* in,void* out)
 {
-    in = nullptr;
-    out = nullptr;
     GLuint* VertexArrayID = new GLuint;
     glGenVertexArrays(1, VertexArrayID);
     glBindVertexArray(*VertexArrayID);
@@ -25,7 +22,7 @@ EngModel gen_model (void* in,void* out)
     EngModel rmodel;
     rmodel.size_data = sizeof(g_vertex_buffer_data);
     rmodel.vertex_data = new GLfloat [rmodel.size_data];
-    for (int i = 0; i < rmodel.size_data; i++)
+    for (GLuint i = 0; i < rmodel.size_data; i++)
     {
         rmodel.vertex_data[i] = g_vertex_buffer_data[i];
     }
@@ -42,14 +39,57 @@ int main( void )
     EngModelArray marray;
     EngGenModelFunct genfunct;
     EngModel* model1;
-    initclgl.init("tutorial 2",800,640);
+    EngPlatform* platform;
+    initclgl.init("example 2",800,640);
+    platform = initclgl.getEngPlatform(0);
     genfunct.func = gen_model;
     marray.genModel(genfunct,nullptr);
     model1 = marray.getModel(0);
-    EngPlatform* platform;
-    platform = initclgl.getEngPlatform(0);
-    // Ensure we can capture the escape key being pressed below
-    //glfwEnable( GLFW_STICKY_KEYS );
+    std::vector<const char*> log = initclgl.getErrLog();
+    std::cout<<"Number of errors: "<<log.size()<<std::endl;
+    for (size_t i = 0; i < log.size(); i++ )
+        std::cout<<log[i]<<std::endl;
+    initclgl.clearErrLog();
+    log = initclgl.getLog();
+    std::cout<<"Debug information:\n";
+    for (size_t i = 0; i < log.size(); i++ )
+        std::cout<<log[i]<<std::endl;initclgl.clearLog();
+    std::cout<<"Platforms: "<<initclgl.getNumPlatforms()<<std::endl;
+    initclgl.createContext(0);
+    cl_command_queue command_queue = NULL;
+    cl_mem memobj = NULL;
+    cl_program program = NULL;
+    cl_kernel kernel = NULL;
+    char outstr[14];
+    std::string str;
+    std::ifstream in;
+    in.open("hello.cl");
+    std::getline(in,str,'\0');
+    in.close();
+    cl_int ret;
+    command_queue = clCreateCommandQueue(platform->context, platform->devices[0], 0, &ret);
+    if (ret!=CL_SUCCESS)
+            std::cerr<<"Something gonna wrong1\n";
+    memobj = clCreateBuffer(platform->context, CL_MEM_READ_WRITE,14 * sizeof(char), NULL, &ret);
+    if (ret!=CL_SUCCESS)
+            std::cerr<<"Something gonna wrong2\n";
+    char* buff = (char*) str.c_str();
+    size_t size = str.size();
+    program = clCreateProgramWithSource(platform->context, 1, (const char**)&buff,&size, &ret);
+    if (ret!=CL_SUCCESS)
+         std::cerr<<"Something gonna wrong3\n";
+    ret = clBuildProgram(program, 1, & platform->devices[0], NULL, NULL, NULL);
+    kernel = clCreateKernel(program, "hello", &ret);
+    ret = clSetKernelArg(kernel, 0, sizeof(cl_mem), (void *)&memobj);
+    ret = clEnqueueTask(command_queue, kernel, 0, NULL,NULL);
+    ret = clEnqueueReadBuffer(command_queue, memobj, CL_TRUE, 0,14 * sizeof(char),outstr, 0, NULL, NULL);
+    std::cout<<outstr<<std::endl;
+    ret = clFlush(command_queue);
+    ret = clFinish(command_queue);
+    ret = clReleaseKernel(kernel);
+    ret = clReleaseProgram(program);
+    ret = clReleaseMemObject(memobj);
+    ret = clReleaseCommandQueue(command_queue);
     // Dark blue background
     glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
     do{
