@@ -1,139 +1,134 @@
 #include "engInit.hpp" 
 
-std::vector<const char*> EngLog::GetLog()
+std::vector<const char*> EngLog::getLog()
 {
 	return log;
 }
 
-void EngLog::WriteLog(const char* buff)
+void EngLog::writeLog(const char* buff)
 {
 	log.push_back(buff);
 }
 
-void EngLog::ClearLog()
+void EngLog::clearLog()
 {
 	log.clear();
 }
 
-EngLog::~EngLog()
-{
-	ClearLog();
-}
-
-void EngInit::SetCallback(EngErrFunct callback)
+void EngInit::setCallback(EngErrFunct callback)
 {
 	glfwSetErrorCallback(callback.func);
 }
 
-void EngInit::SetCallback (EngWinPosFunct callback)
+void EngInit::setCallback (EngWinPosFunct callback)
 {
 	glfwSetWindowPosCallback(window,callback.func);
 }
 
-void EngInit::SetCallback (EngWinSizeFunct callback)
+void EngInit::setCallback (EngWinSizeFunct callback)
 {
 	glfwSetWindowSizeCallback(window,callback.func);
 }
 
-void EngInit::SetCallback (EngWinCloseFunct callback)
+void EngInit::setCallback (EngWinCloseFunct callback)
 {
 	glfwSetWindowCloseCallback(window,callback.func);
 }
 
-void EngInit::SetCallback (EngWinRefFunct callback)
+void EngInit::setCallback (EngWinRefFunct callback)
 {
 	glfwSetWindowRefreshCallback(window,callback.func);
 }
-void EngInit::SetCallback (EngWinFocFunct callback)
+void EngInit::setCallback (EngWinFocFunct callback)
 {
 	glfwSetWindowFocusCallback(window,callback.func);
 }
 
-void EngInit::SetCallback (EngWinIconFunct callback)
+void EngInit::setCallback (EngWinIconFunct callback)
 {
 	glfwSetWindowIconifyCallback(window,callback.func);
 }
 
-void EngInit::SetCallback (EngMouseButFunct callback)
+void EngInit::setCallback (EngMouseButFunct callback)
 {
 	glfwSetMouseButtonCallback(window,callback.func);
 }
 
-void EngInit::SetCallback (EngCurPosFunct callback)
+void EngInit::setCallback (EngCurPosFunct callback)
 {
 	glfwSetCursorPosCallback(window,callback.func);
 }
 
-void EngInit::SetCallback (EngCurEnterFunct callback)
+void EngInit::setCallback (EngCurEnterFunct callback)
 {
 	glfwSetCursorEnterCallback(window,callback.func);
 }
 
-void EngInit::SetCallback (EngScrollFunct callback)
+void EngInit::setCallback (EngScrollFunct callback)
 {
 	glfwSetScrollCallback(window,callback.func);
 }
 
-void EngInit::SetCallback (EngKeyFunct callback)
+void EngInit::setCallback (EngKeyFunct callback)
 {
 	glfwSetKeyCallback(window,callback.func);
 }
 
-void EngInit::SetCallback (EngCharFunct callback)
+void EngInit::setCallback (EngCharFunct callback)
 {
 	glfwSetCharCallback(window,callback.func);
 }
 
-void EngInit::SetCallback (EngMonitorFunct callback)
+void EngInit::setCallback (EngMonitorFunct callback)
 {
 	glfwSetMonitorCallback(callback.func);
 }
 
-void EngInit::SetCallback(EngContextFunct functin, void* data)
+void EngInit::setCallback(EngContextFunct functin, void* data)
 {
 	funct=functin;
 	usr_data=data;
 }
 
-std::vector<const char*> EngInit::GetLog()
+std::vector<const char*> EngInit::getLog()
 {
-	return log.GetLog();
+    return log.getLog();
 }
 
-std::vector<const char*> EngInit::GetErrLog()
+std::vector<const char*> EngInit::getErrLog()
 {
-	return errlog.GetLog();
+    return errlog.getLog();
 }
 
-void EngInit::ClearLog()
+void EngInit::clearLog()
 {
-	log.ClearLog();
+    log.clearLog();
 }
 
-void EngInit::ClearErrLog()
+void EngInit::clearErrLog()
 {
-	errlog.ClearLog();
+    errlog.clearLog();
 }
 
-int EngInit::ErrFunc(int err,const char* str)
+int EngInit::errFunc(int err,const char* str)
 {
 	if (err!=CL_SUCCESS)
 	{
 		std::stringstream tmp;
 		tmp<<str<<err;
-		log.WriteLog("Add errlog");
-		errlog.WriteLog(tmp.str().c_str());
+        log.writeLog("Add errlog");
+        errlog.writeLog(tmp.str().c_str());
 	}
 	return err;
 }
 
-void EngInit::SetHint(std::initializer_list<int> args)
+void EngInit::setHint(std::initializer_list<int> args)
 {
 	for (auto p=args.begin(); p!=args.end(); p+=2) 
 		glfwWindowHint(*p,*(p+1));
 }
 
-void EngInit::SetHint()
+void EngInit::setHint()
 {
 	glfwDefaultWindowHints();
 }
@@ -145,23 +140,23 @@ EngInit::EngInit()
 	vidmode = nullptr;
 	monitor = nullptr;
 	window = nullptr;
-	log.ClearLog();
-	errlog.ClearLog();
+    log.clearLog();
+    errlog.clearLog();
 	numPlatforms = 0;
 	platforms.clear();
 	funct.func = nullptr;
-	log.WriteLog("EngInit() OK");
+    log.writeLog("EngInit() OK");
 }
 
-int EngInit::Init(const char* title, int width, int height)
+int EngInit::init(const char* title, int width, int height)
 {
 	cl_int err;
-	err=ErrFunc(clGetPlatformIDs(0, NULL, &numPlatforms),"clGetPlatformIDs error: ");
+    err=errFunc(clGetPlatformIDs(0, NULL, &numPlatforms),"clGetPlatformIDs error: ");
 	if (err!=CL_SUCCESS) return err;
 	if (numPlatforms==0)
 	{
-		log.WriteLog("Add errlog");
-		errlog.WriteLog("No platform found");
+        log.writeLog("Add errlog");
+        errlog.writeLog("No platform found");
 		return err;
 	}
 	pltmp = new cl_platform_id[numPlatforms];
@@ -171,7 +166,7 @@ int EngInit::Init(const char* title, int width, int height)
 		EngPlatform tmp;
 		tmp.parent_platform = &pltmp[i];
 		tmp.context=0;
-		err=ErrFunc( clGetDeviceIDs(*(tmp.parent_platform ), CL_DEVICE_TYPE_ALL, 0, NULL, &(tmp.numDevices)),"clGetDeviceIDs error: ");
+        err=errFunc( clGetDeviceIDs(*(tmp.parent_platform ), CL_DEVICE_TYPE_ALL, 0, NULL, &(tmp.numDevices)),"clGetDeviceIDs error: ");
 		if (err!=CL_SUCCESS)
 		{
 			delete [] pltmp;
@@ -179,7 +174,7 @@ int EngInit::Init(const char* title, int width, int height)
 		}
 		tmp.devices = new cl_device_id[tmp.numDevices];
 		clGetDeviceIDs(*(tmp.parent_platform) , CL_DEVICE_TYPE_ALL, tmp.numDevices, tmp.devices, NULL);
-		ErrFunc(err,"clCreateContext error: ");
+        errFunc(err,"clCreateContext error: ");
 		if (err!=CL_SUCCESS)
 		{
 			delete [] pltmp;
@@ -191,16 +186,16 @@ int EngInit::Init(const char* title, int width, int height)
 	CLInit = true;
 	if (!glfwInit())
 	{
-		log.WriteLog("Add errlog");
-		errlog.WriteLog("glfwInit error");
+        log.writeLog("Add errlog");
+        errlog.writeLog("glfwInit error");
 		return GLFW_INIT_ERROR;
 	}
 	monitor = glfwGetPrimaryMonitor();
 	vidmode = (GLFWvidmode*)glfwGetVideoMode (monitor);
 	if (window != nullptr)
 	{
-		log.WriteLog("Add errlog");
-		errlog.WriteLog("GLFWwindow already created");
+        log.writeLog("Add errlog");
+        errlog.writeLog("GLFWwindow already created");
 		return GLFW_CREATE_WINDOW_ERROR;
 	}
 	glewExperimental=true;
@@ -214,17 +209,17 @@ int EngInit::Init(const char* title, int width, int height)
 	GLenum GlewInitResult = glewInit();
 	if (GLEW_OK!=GlewInitResult)
 	{
-		log.WriteLog("Add errlog");
-		errlog.WriteLog((const char*)glewGetErrorString(GlewInitResult));
-		glfwDestroyWindow(window);
+        log.writeLog("Add errlog");
+        errlog.writeLog((const char*)glewGetErrorString(GlewInitResult));
+        glfwDestroyWindow(window);
 		return GLEW_INIT_ERROR;
 	}
 	GLInit = true;
-	log.WriteLog("Init(const char*,int,int) OK");
+    log.writeLog("Init(const char*,int,int) OK");
 	return ENG_INIT_OK;
 }
 
-void EngInit::Destroy()
+void EngInit::destroy()
 {
 	if (CLInit == true)
 	{
@@ -244,16 +239,16 @@ void EngInit::Destroy()
 		glfwTerminate();
 		GLInit = false;
 	}
-	log.ClearLog();
-	errlog.ClearLog();
+    log.clearLog();
+    errlog.clearLog();
 }
 
-cl_uint EngInit::GetNumPlatforms()
+cl_uint EngInit::getNumPlatforms()
 {
 	return numPlatforms;
 }
 
-cl_int EngInit::CreateContext(int num)
+cl_int EngInit::createContext(int num)
 {
 	#ifdef __linux__
 		cl_context_properties properties[] = { 
@@ -275,27 +270,27 @@ cl_int EngInit::CreateContext(int num)
 			(cl_context_properties)shareGroup,
 		0};
 	#else
-		log.WriteLog("Add errlog");
-		errlog.WriteLog("Unsupported platform");
+        log.writeLog("Add errlog");
+        errlog.writeLog("Unsupported platform");
 		return ENG_UNKNOW_PLATFORM;
 	#endif
 	cl_int err;
 	platforms[num].context = clCreateContext(properties,platforms[num].numDevices,platforms[num].devices,funct.func,usr_data,&err);
-	ErrFunc(err,"clCreateContext error: ");
+    errFunc(err,"clCreateContext error: ");
 	if (err!=CL_SUCCESS)
 	{
 		return err;
 	}
-	log.WriteLog("CreateContext(int) OK");
+    log.writeLog("CreateContext(int) OK");
 	return 0;
 }
 
-EngPlatform* EngInit::GetEngPlatform(int num)
+EngPlatform* EngInit::getEngPlatform(int num)
 {
 	return &(platforms.at(num));
 }
 
-int EngInit::DestroyContext(int num)
+int EngInit::destroyContext(int num)
 {
 	if (platforms.at(num).context != 0)
 	{
@@ -306,7 +301,7 @@ int EngInit::DestroyContext(int num)
 	}
 	else
 	{
-		ErrFunc(ENG_CONTEXT_ERROR,"clReleaseContext error: ");
+        errFunc(ENG_CONTEXT_ERROR,"clReleaseContext error: ");
 		return ENG_CONTEXT_ERROR;
 	}
 }

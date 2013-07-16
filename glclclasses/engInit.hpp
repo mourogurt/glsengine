@@ -29,10 +29,9 @@ typedef void (*ENG_CL_CALLBACK)(const char *, const void *, size_t, void *);
 class EngLog
 {
 public:
-	std::vector<const char*> GetLog();
-	void WriteLog (const char*);
-	void ClearLog();
-	~EngLog();
+    std::vector<const char*> getLog();
+    void writeLog (const char*);
+    void clearLog();
 private:
 	std::vector <const char*> log;
 };
@@ -125,35 +124,35 @@ class EngInit
 {
 public:
 	EngInit();
-	int Init (const char* title, int width = 0, int height = 0);
-	cl_uint GetNumPlatforms ();
-	cl_int CreateContext (int);
-	EngPlatform* GetEngPlatform (int);
-	int DestroyContext (int);
-	void SetCallback (EngErrFunct);
-	void SetCallback (EngWinPosFunct);
-	void SetCallback (EngWinSizeFunct);
-	void SetCallback (EngWinCloseFunct);
-	void SetCallback (EngWinRefFunct);
-	void SetCallback (EngWinFocFunct);
-	void SetCallback (EngWinIconFunct);
-	void SetCallback (EngMouseButFunct);
-	void SetCallback (EngCurPosFunct);
-	void SetCallback (EngCurEnterFunct);
-	void SetCallback (EngScrollFunct);
-	void SetCallback (EngKeyFunct);
-	void SetCallback (EngCharFunct);
-	void SetCallback (EngMonitorFunct);
-	void SetCallback (EngContextFunct, void*);
-	std::vector<const char*> GetLog();
-	std::vector<const char*> GetErrLog();
-	void ClearLog();
-	void ClearErrLog();
-	void SetHint (std::initializer_list<int>);
-	void SetHint ();
-	void Destroy();
+    int init (const char* title, int width = 0, int height = 0);
+    cl_uint getNumPlatforms ();
+    cl_int createContext (int);
+    EngPlatform* getEngPlatform (int);
+    int destroyContext (int);
+    void setCallback (EngErrFunct);
+    void setCallback (EngWinPosFunct);
+    void setCallback (EngWinSizeFunct);
+    void setCallback (EngWinCloseFunct);
+    void setCallback (EngWinRefFunct);
+    void setCallback (EngWinFocFunct);
+    void setCallback (EngWinIconFunct);
+    void setCallback (EngMouseButFunct);
+    void setCallback (EngCurPosFunct);
+    void setCallback (EngCurEnterFunct);
+    void setCallback (EngScrollFunct);
+    void setCallback (EngKeyFunct);
+    void setCallback (EngCharFunct);
+    void setCallback (EngMonitorFunct);
+    void setCallback (EngContextFunct, void*);
+    std::vector<const char*> getLog();
+    std::vector<const char*> getErrLog();
+    void clearLog();
+    void clearErrLog();
+    void setHint (std::initializer_list<int>);
+    void setHint ();
+    void destroy();
 private:
-	int ErrFunc (int,const char*);
+    int errFunc (int,const char*);
 	bool GLInit;
 	bool CLInit;
 	GLFWvidmode* vidmode;

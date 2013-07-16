@@ -28,13 +28,13 @@ EngModel* EngModelArray::getModel(int n)
     return &(models[n]);
 }
 
-void EngModelArray::Destroy()
+void EngModelArray::destroy()
 {
     for (auto i = models.begin(); i < models.end(); i++)
     {
-        if (i -> vertexBuffer != 0) glDeleteBuffers(1, &(i -> vertexBuffer));
-        if (i -> vertexID != 0) glDeleteVertexArrays(1, &(i -> vertexID));
-        if (i -> vertex_data != NULL) delete [] i -> vertex_data;
+        if (i -> vertexBuffer != nullptr){ glDeleteBuffers(1, i -> vertexBuffer); delete [] i -> vertexBuffer; }
+        if (i -> vertexID != nullptr){ glDeleteVertexArrays(1, i -> vertexID); delete [] i -> vertexID; }
+        if (i -> vertex_data != nullptr) delete [] i -> vertex_data;
     }
     models.clear();
 }

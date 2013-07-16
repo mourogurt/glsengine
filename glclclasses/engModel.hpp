@@ -4,8 +4,8 @@
 
 struct EngModel
 {
-    GLuint vertexID;
-    GLuint vertexBuffer;
+    GLuint *vertexID;
+    GLuint *vertexBuffer;
     GLfloat *vertex_data;
     GLuint size_data;
 };
@@ -30,7 +30,7 @@ public:
     void* loadModel(EngLoadModelFunct, const char*);
     void* genModel(EngGenModelFunct,void*);
     EngModel* getModel(int);
-    void Destroy();
+    void destroy();
 private:
     std::vector<EngModel> models;
 };

@@ -19,13 +19,13 @@ class EngComputeArray
 {
 public:
     EngComputeArray();
-    EngCompute addCompute(EngLoadCompFunct,void*,void*);
+    void* addCompute(EngLoadCompFunct,void*);
     GLuint createProgram(int,int&);
-    void Destroy();
-    std::vector<const char*> GetLog();
-    std::vector<const char*> GetErrLog();
-    void ClearLog();
-    void ClearErrLog();
+    void destroy();
+    std::vector<const char*> getLog();
+    std::vector<const char*> getErrLog();
+    void clearLog();
+    void clearErrLog();
 private:
     std::vector<EngCompute> sources;
     std::vector<GLuint> programs;
