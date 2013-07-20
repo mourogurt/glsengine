@@ -48,7 +48,7 @@ size_t EngComputeArray::getNumPrograms()
     return programs.size();
 }
 
-GLuint EngComputeArray::createProgram(int num, int &err = nullptr)
+GLuint EngComputeArray::createProgram(int num, int &err)
 {
     GLuint VertexShaderID = 0, FragmentShaderID = 0;
     int InfoLogLength;
@@ -59,7 +59,7 @@ GLuint EngComputeArray::createProgram(int num, int &err = nullptr)
         char const* VertexSourcePointer = sources[num].vertex_source;
         glShaderSource(VertexShaderID, 1, &VertexSourcePointer , NULL);
         glCompileShader(VertexShaderID);
-        if (err != nullptr)
+        if (err != 0)
             glGetShaderiv(VertexShaderID, GL_COMPILE_STATUS, &err);
         glGetShaderiv(VertexShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
         if ( InfoLogLength > 0 ){
@@ -80,7 +80,7 @@ GLuint EngComputeArray::createProgram(int num, int &err = nullptr)
         char const * FragmentSourcePointer = sources[num].fragment_source;
         glShaderSource(FragmentShaderID, 1, &FragmentSourcePointer , NULL);
         glCompileShader(FragmentShaderID);
-        if (err != nullptr)
+        if (err != 0)
             glGetShaderiv(FragmentShaderID, GL_COMPILE_STATUS, &err);
         glGetShaderiv(FragmentShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
         if ( InfoLogLength > 0 ){
@@ -98,7 +98,7 @@ GLuint EngComputeArray::createProgram(int num, int &err = nullptr)
         glAttachShader(ProgramID, FragmentShaderID);
     }
     glLinkProgram(ProgramID);
-    if (err != nullptr)
+    if (err != 0)
         glGetProgramiv(ProgramID, GL_LINK_STATUS, &err);
     glGetProgramiv(ProgramID, GL_INFO_LOG_LENGTH, &InfoLogLength);
     if ( InfoLogLength > 0 ){

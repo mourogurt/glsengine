@@ -24,7 +24,7 @@ public:
     void deleteCompute(size_t);
     size_t getNumSources();
     size_t getNumPrograms();
-    GLuint createProgram(int,int& = nullptr);
+    GLuint createProgram(int,int&);
     void destroy();
     std::vector<const char*> getLog();
     std::vector<const char*> getErrLog();

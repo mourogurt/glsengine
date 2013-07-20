@@ -73,7 +73,7 @@ int main( void )
     //ID of gpu program
     GLuint programID;
     //Initialize window
-    initclgl.init("chapter 2 completed",800,640);
+    initclgl.init("chapter 2 completed");
     //Get the first detected platform
     platform = initclgl.getEngPlatform(0);
     //Load functions in functors
@@ -86,7 +86,8 @@ int main( void )
     //Get the first added model
     model1 = marray.getModel(0);
     // create the gpu program
-    programID = shaders.createProgram(0);
+    int error;
+    programID = shaders.createProgram(0,error);
     // Print errors
     std::vector<const char*> log = initclgl.getErrLog();
     std::cout<<"Errors: "<<std::endl;
