@@ -38,6 +38,24 @@ void EngComputeArray::deleteCompute(size_t num)
     log.writeLog("deleteCompute(int) OK");
 }
 
+void EngComputeArray::deleteProgram(size_t num)
+{
+    size_t i = 0;
+    size_t t = 0;
+    clearProgram(num);
+    if (num == 0)
+        programs.pop_front();
+    else if (num == programs.size())
+        programs.pop_back();
+    else
+        for (i = 0; i < programs.size(); i++, t++)
+        {
+            programs[t] = programs[i];
+            if (t == num) t--;
+        }
+    log.writeLog("deleteProgram(size_t) OK");
+}
+
 size_t EngComputeArray::getNumSources()
 {
     return sources.size();
@@ -125,11 +143,13 @@ void EngComputeArray::destroy()
 {
     for (size_t i = 0; i < programs.size(); i++)
     {
-        if (programs[i] != 0) glDeleteProgram(programs[i]);
+        clearProgram(i);
         clearSource(i);
     }
     sources.clear();
-    log.writeLog("destroy() OK");
+    programs.clear();
+    log.clearLog();
+    errlog.clearLog();
 }
 
 std::vector<const char*> EngComputeArray::getLog()
@@ -157,4 +177,10 @@ void EngComputeArray::clearSource(int num)
     if (sources[num].vertex_source != nullptr) delete [] sources[num].vertex_source;
     if (sources[num].fragment_source != nullptr) delete [] sources[num].fragment_source;
     log.writeLog("clearSource(int) OK");
+}
+
+void EngComputeArray::clearProgram(int num)
+{
+    if (programs[num] != 0) glDeleteProgram(programs[num]);
+    log.writeLog("clearProgram(int) OK");
 }

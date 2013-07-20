@@ -22,6 +22,7 @@ public:
     EngComputeArray();
     void* addCompute(EngLoadCompFunct,void*);
     void deleteCompute(size_t);
+    void deleteProgram (size_t);
     size_t getNumSources();
     size_t getNumPrograms();
     GLuint createProgram(int,int&);
@@ -32,8 +33,9 @@ public:
     void clearErrLog();
 private:
     void clearSource (int);
+    void clearProgram (int);
     std::deque<EngCompute> sources;
-    std::vector<GLuint> programs;
+    std::deque<GLuint> programs;
     EngLog log;
     EngLog errlog;
 };
