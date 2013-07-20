@@ -2,7 +2,8 @@
 
 std::vector<const char*> EngLog::getLog()
 {
-	return log;
+    std::vector<const char*> rlog = log;
+    return rlog;
 }
 
 void EngLog::writeLog(const char* buff)

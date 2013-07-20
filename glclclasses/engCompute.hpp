@@ -1,6 +1,7 @@
 #ifndef ENGCOMPUTE_HPP
 #define ENGCOMPUTE_HPP
 #include "engInit.hpp"
+#include <deque>
 
 struct EngCompute
 {
@@ -20,6 +21,7 @@ class EngComputeArray
 public:
     EngComputeArray();
     void* addCompute(EngLoadCompFunct,void*);
+    void deleteCompute(int);
     GLuint createProgram(int,int&);
     void destroy();
     std::vector<const char*> getLog();
@@ -27,7 +29,7 @@ public:
     void clearLog();
     void clearErrLog();
 private:
-    std::vector<EngCompute> sources;
+    std::deque<EngCompute> sources;
     std::vector<GLuint> programs;
     EngLog log;
     EngLog errlog;

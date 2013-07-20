@@ -7,6 +7,7 @@ EngComputeArray::EngComputeArray()
     programs.clear();
     log.clearLog();
     errlog.clearLog();
+    log.writeLog("EngComputeArray() OK");
 }
 
 void* EngComputeArray::addCompute(EngLoadCompFunct funct, void *in)
@@ -15,12 +16,30 @@ void* EngComputeArray::addCompute(EngLoadCompFunct funct, void *in)
     void* out = nullptr;
     tmp = funct.func(in,out);
     sources.push_back(tmp);
+    log.writeLog("addCompute(EngLoadCompFunct,void*) OK");
     return out;
+}
+
+void EngComputeArray::deleteCompute(int num)
+{
+    int i = 0;
+    int t = 0;
+    if (num == 0)
+        sources.pop_front();
+    else if (num == sources.size())
+        sources.pop_back();
+    else
+        for (i = 0; i < sources.size(); i++, t++)
+        {
+            sources[t] = sources[i];
+            if (t == num) t--;
+        }
+    log.writeLog("deleteCompute(int) OK");
 }
 
 GLuint EngComputeArray::createProgram(int num, int &err)
 {
-    GLuint VertexShaderID, FragmentShaderID;
+    GLuint VertexShaderID = 0, FragmentShaderID = 0;
     int InfoLogLength;
     GLuint ProgramID = glCreateProgram();
     if (strcmp(sources[num].vertex_source,"") != 0)
@@ -88,3 +107,30 @@ GLuint EngComputeArray::createProgram(int num, int &err)
     return ProgramID;
 }
 
+void EngComputeArray::destroy()
+{
+    sources.clear();
+    for (size_t i = 0; i < programs.size(); i++)
+        if (programs[i] != 0) glDeleteProgram(programs[i]);
+    log.writeLog("destroy() OK");
+}
+
+std::vector<const char*> EngComputeArray::getLog()
+{
+    return log.getLog();
+}
+
+std::vector<const char*> EngComputeArray::getErrLog()
+{
+    return errlog.getLog();
+}
+
+void EngComputeArray::clearLog()
+{
+    log.clearLog();
+}
+
+void EngComputeArray::clearErrLog()
+{
+    errlog.clearLog();
+}
