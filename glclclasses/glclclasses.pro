@@ -26,4 +26,6 @@ unix|macx: LIBS += -lpthread
 
 OTHER_FILES += \
     hello.cl \
-    testModel
+    testModel \
+    vertex.glsl \
+    fragment.glsl

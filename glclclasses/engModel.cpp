@@ -23,6 +23,11 @@ void* EngModelArray::genModel(EngGenModelFunct funct, void* in)
     return data;
 }
 
+size_t EngModelArray::getNumModels()
+{
+    return models.size();
+}
+
 EngModel* EngModelArray::getModel(int n)
 {
     return &(models[n]);

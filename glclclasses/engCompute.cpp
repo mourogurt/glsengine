@@ -20,10 +20,11 @@ void* EngComputeArray::addCompute(EngLoadCompFunct funct, void *in)
     return out;
 }
 
-void EngComputeArray::deleteCompute(int num)
+void EngComputeArray::deleteCompute(size_t num)
 {
-    int i = 0;
-    int t = 0;
+    size_t i = 0;
+    size_t t = 0;
+    clearSource(num);
     if (num == 0)
         sources.pop_front();
     else if (num == sources.size())
@@ -37,7 +38,17 @@ void EngComputeArray::deleteCompute(int num)
     log.writeLog("deleteCompute(int) OK");
 }
 
-GLuint EngComputeArray::createProgram(int num, int &err)
+size_t EngComputeArray::getNumSources()
+{
+    return sources.size();
+}
+
+size_t EngComputeArray::getNumPrograms()
+{
+    return programs.size();
+}
+
+GLuint EngComputeArray::createProgram(int num, int &err = nullptr)
 {
     GLuint VertexShaderID = 0, FragmentShaderID = 0;
     int InfoLogLength;
@@ -48,7 +59,8 @@ GLuint EngComputeArray::createProgram(int num, int &err)
         char const* VertexSourcePointer = sources[num].vertex_source;
         glShaderSource(VertexShaderID, 1, &VertexSourcePointer , NULL);
         glCompileShader(VertexShaderID);
-        glGetShaderiv(VertexShaderID, GL_COMPILE_STATUS, &err);
+        if (err != nullptr)
+            glGetShaderiv(VertexShaderID, GL_COMPILE_STATUS, &err);
         glGetShaderiv(VertexShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
         if ( InfoLogLength > 0 ){
             char* VertexShaderErrorMessage = new char[InfoLogLength+1];
@@ -68,7 +80,8 @@ GLuint EngComputeArray::createProgram(int num, int &err)
         char const * FragmentSourcePointer = sources[num].fragment_source;
         glShaderSource(FragmentShaderID, 1, &FragmentSourcePointer , NULL);
         glCompileShader(FragmentShaderID);
-        glGetShaderiv(FragmentShaderID, GL_COMPILE_STATUS, &err);
+        if (err != nullptr)
+            glGetShaderiv(FragmentShaderID, GL_COMPILE_STATUS, &err);
         glGetShaderiv(FragmentShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
         if ( InfoLogLength > 0 ){
             char* FragmentShaderErrorMessage = new char[InfoLogLength+1];
@@ -85,7 +98,8 @@ GLuint EngComputeArray::createProgram(int num, int &err)
         glAttachShader(ProgramID, FragmentShaderID);
     }
     glLinkProgram(ProgramID);
-    glGetProgramiv(ProgramID, GL_LINK_STATUS, &err);
+    if (err != nullptr)
+        glGetProgramiv(ProgramID, GL_LINK_STATUS, &err);
     glGetProgramiv(ProgramID, GL_INFO_LOG_LENGTH, &InfoLogLength);
     if ( InfoLogLength > 0 ){
         char* ProgramErrorMessage = new char[InfoLogLength+1];
@@ -109,9 +123,12 @@ GLuint EngComputeArray::createProgram(int num, int &err)
 
 void EngComputeArray::destroy()
 {
-    sources.clear();
     for (size_t i = 0; i < programs.size(); i++)
+    {
         if (programs[i] != 0) glDeleteProgram(programs[i]);
+        clearSource(i);
+    }
+    sources.clear();
     log.writeLog("destroy() OK");
 }
 
@@ -133,4 +150,11 @@ void EngComputeArray::clearLog()
 void EngComputeArray::clearErrLog()
 {
     errlog.clearLog();
+}
+
+void EngComputeArray::clearSource(int num)
+{
+    if (sources[num].vertex_source != nullptr) delete [] sources[num].vertex_source;
+    if (sources[num].fragment_source != nullptr) delete [] sources[num].fragment_source;
+    log.writeLog("clearSource(int) OK");
 }

@@ -4,6 +4,7 @@
 
 #include "engInit.hpp"
 #include "engModel.hpp"
+#include "engCompute.hpp"
 
 EngModel gen_model (void* in,void* out)
 {
@@ -29,33 +30,89 @@ EngModel gen_model (void* in,void* out)
     rmodel.vertexBuffer = vertexbuffer;
     rmodel.vertexID = VertexArrayID;
     return rmodel;
+}
 
+EngCompute load_shader (void* inv, void* outv)
+{
+    EngCompute rshad;
+    std::ifstream in;
+    std::string source;
+    in.open ("vertex.glsl");
+    std::getline(in,source,'\0');
+    in.close();
+    rshad.vertex_source = new char[source.size()+1];
+    for (size_t i = 0; i < source.size(); i++)
+        rshad.vertex_source[i] = source[i];
+    rshad.vertex_source += '\0';
+    in.open ("fragment.glsl");
+    std::getline(in,source,'\0');
+    in.close();
+    rshad.fragment_source = new char[source.size()+1];
+    for (size_t i = 0; i < source.size(); i++)
+        rshad.fragment_source[i] = source[i];
+    rshad.fragment_source += '\0';
+    return rshad;
 }
 
 int main( void )
 {
-
+    //Initialization class
     EngInit initclgl;
+    //Array of EngModels class
     EngModelArray marray;
+    //Functor to load in Array
     EngGenModelFunct genfunct;
+    //Pointer to EngModel (vertex coordinate)
     EngModel* model1;
+    //Pointer to platform (includes GLFWwindow*, cl_platform_id*, cl_device_id*, numDevices, cl_context)
     EngPlatform* platform;
-    initclgl.init("example 2",800,640);
+    //Functor to load shaders in Shaders array
+    EngLoadCompFunct comfunct;
+    //Array of shaders class
+    EngComputeArray shaders;
+    //ID of gpu program
+    GLuint programID;
+    //Initialize window
+    initclgl.init("chapter 2 completed",800,640);
+    //Get the first detected platform
     platform = initclgl.getEngPlatform(0);
+    //Load functions in functors
     genfunct.func = gen_model;
+    comfunct.func = load_shader;
+    //Add model to array
     marray.genModel(genfunct,nullptr);
+    //Add shader to array
+    shaders.addCompute(comfunct,nullptr);
+    //Get the first added model
     model1 = marray.getModel(0);
+    // create the gpu program
+    programID = shaders.createProgram(0);
+    // Print errors
     std::vector<const char*> log = initclgl.getErrLog();
-    std::cout<<"Number of errors: "<<log.size()<<std::endl;
+    std::cout<<"Errors: "<<std::endl;
     for (size_t i = 0; i < log.size(); i++ )
         std::cout<<log[i]<<std::endl;
     initclgl.clearErrLog();
+    log = shaders.getErrLog();
+    for (size_t i = 0; i < log.size(); i++ )
+        std::cout<<log[i]<<std::endl;
+    shaders.clearErrLog();
     log = initclgl.getLog();
+    //print debug information
     std::cout<<"Debug information:\n";
     for (size_t i = 0; i < log.size(); i++ )
-        std::cout<<log[i]<<std::endl;initclgl.clearLog();
+        std::cout<<log[i]<<std::endl;
+    initclgl.clearLog();
+    log = shaders.getLog();
+    for (size_t i = 0; i < log.size(); i++ )
+        std::cout<<log[i]<<std::endl;
+    shaders.clearLog();
+    ////////////////////////////////////////////////////////////////////////////////
+    //Print the number of platforms
     std::cout<<"Platforms: "<<initclgl.getNumPlatforms()<<std::endl;
+    //Create context
     initclgl.createContext(0);
+    //OpenCL program, later will be in engine
     cl_command_queue command_queue = NULL;
     cl_mem memobj = NULL;
     cl_program program = NULL;
@@ -69,15 +126,15 @@ int main( void )
     cl_int ret;
     command_queue = clCreateCommandQueue(platform->context, platform->devices[0], 0, &ret);
     if (ret!=CL_SUCCESS)
-            std::cerr<<"Something gonna wrong1\n";
+            std::cerr<<"error to create command queue\n";
     memobj = clCreateBuffer(platform->context, CL_MEM_READ_WRITE,14 * sizeof(char), NULL, &ret);
     if (ret!=CL_SUCCESS)
-            std::cerr<<"Something gonna wrong2\n";
+            std::cerr<<"error to create buffer\n";
     char* buff = (char*) str.c_str();
     size_t size = str.size();
     program = clCreateProgramWithSource(platform->context, 1, (const char**)&buff,&size, &ret);
     if (ret!=CL_SUCCESS)
-         std::cerr<<"Something gonna wrong3\n";
+         std::cerr<<"error to create program\n";
     ret = clBuildProgram(program, 1, & platform->devices[0], NULL, NULL, NULL);
     kernel = clCreateKernel(program, "hello", &ret);
     ret = clSetKernelArg(kernel, 0, sizeof(cl_mem), (void *)&memobj);
@@ -90,11 +147,15 @@ int main( void )
     ret = clReleaseProgram(program);
     ret = clReleaseMemObject(memobj);
     ret = clReleaseCommandQueue(command_queue);
+    /////////////////////////////////////////////////////////////////////////////
+    //Later will be in a engine render
     // Dark blue background
     glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
     do{
         // Clear the screen
         glClear( GL_COLOR_BUFFER_BIT );
+        // Use program
+        glUseProgram(programID);
         // 1rst attribute buffer : vertices
         glEnableVertexAttribArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, *(model1 -> vertexBuffer));
@@ -118,7 +179,9 @@ int main( void )
 
     } // Check if the ESC key was pressed or the window was closed
     while( glfwGetKey(platform -> window, GLFW_KEY_ESCAPE) != GLFW_PRESS && (!glfwWindowShouldClose(platform -> window)));
+    //Release all memory, contexts, devices, e.t.c
     marray.destroy();
+    shaders.destroy();
     initclgl.destroy();
     return 0;
 }

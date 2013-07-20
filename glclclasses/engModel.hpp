@@ -29,6 +29,7 @@ public:
     EngModelArray();
     void* loadModel(EngLoadModelFunct, const char*);
     void* genModel(EngGenModelFunct,void*);
+    size_t getNumModels ();
     EngModel* getModel(int);
     void destroy();
     std::vector<const char*> getLog();
