@@ -5,7 +5,7 @@
 struct EngCompute
 {
     char* vertex_source;
-    char* fraagment_source;
+    char* fragment_source;
 };
 
 typedef EngCompute (*ENGLOADCOMPFUNC)(void*,void*);
