@@ -15,8 +15,6 @@
 #include <vector>
 #include <sstream>
 
-using namespace glm;
-
 #define ENG_INIT_OK 0
 #define GLFW_INIT_ERROR 1
 #define GLEW_INIT_ERROR 2
