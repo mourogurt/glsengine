@@ -66,8 +66,15 @@ size_t EngComputeArray::getNumPrograms()
     return programs.size();
 }
 
-GLuint EngComputeArray::createProgram(int num, int &err)
+GLuint EngComputeArray::getProgram(int num)
 {
+    log.writeLog("getProgram(int) OK");
+    return programs.at(num);
+}
+
+int EngComputeArray::createProgram(int num)
+{
+    int err;
     GLuint VertexShaderID = 0, FragmentShaderID = 0;
     int InfoLogLength;
     GLuint ProgramID = glCreateProgram();
@@ -88,7 +95,7 @@ GLuint EngComputeArray::createProgram(int num, int &err)
             delete [] VertexShaderErrorMessage;
             glDeleteShader(VertexShaderID);
             glDeleteProgram(ProgramID);
-            return 0;
+            return err;
         }
         glAttachShader(ProgramID, VertexShaderID);
     }
@@ -111,7 +118,7 @@ GLuint EngComputeArray::createProgram(int num, int &err)
             if (strcmp(sources[num].vertex_source,"") != 0)
                 glDeleteShader(VertexShaderID);
             glDeleteProgram(ProgramID);
-            return 0;
+            return err;
         }
         glAttachShader(ProgramID, FragmentShaderID);
     }
@@ -130,13 +137,13 @@ GLuint EngComputeArray::createProgram(int num, int &err)
         if (strcmp(sources[num].fragment_source,"") != 0)
             glDeleteShader(FragmentShaderID);
         glDeleteProgram(ProgramID);
-        return 0;
+        return err;
     }
     glDeleteShader(VertexShaderID);
     glDeleteShader(FragmentShaderID);
     programs.push_back(ProgramID);
     log.writeLog("createProgram(int,int&) OK");
-    return ProgramID;
+    return 0;
 }
 
 void EngComputeArray::destroy()

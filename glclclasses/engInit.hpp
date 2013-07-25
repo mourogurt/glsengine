@@ -111,6 +111,8 @@ struct EngContextFunct
 
 struct EngPlatform
 {
+    int width;
+    int height;
 	GLFWwindow* window;
 	cl_platform_id* parent_platform;
 	cl_device_id* devices;

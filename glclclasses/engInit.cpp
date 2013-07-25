@@ -200,12 +200,25 @@ int EngInit::init(const char* title, int width, int height)
 		return GLFW_CREATE_WINDOW_ERROR;
 	}
 	glewExperimental=true;
+    int ht,wt;
 	if ((height!= 0) && (width != 0))
+    {
 		window = glfwCreateWindow(width, height, title, NULL, NULL);
+        wt = width;
+        ht = height;
+    }
 	else
+    {
 		window = glfwCreateWindow(vidmode->width, vidmode->height, title, monitor, NULL);
+        wt = width;
+        ht = height;
+    }
 	for (auto p = platforms.begin(); p<platforms.end(); p++)
-		(*p).window=window;
+    {
+        (*p).window = window;
+        (*p).height = ht;
+        (*p).width = wt;
+    }
 	glfwMakeContextCurrent(window);
 	GLenum GlewInitResult = glewInit();
 	if (GLEW_OK!=GlewInitResult)

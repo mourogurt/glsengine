@@ -73,6 +73,8 @@ int main( void )
     EngComputeArray shaders;
     //ID of gpu program
     GLuint programID;
+    //Camera class
+    EngCamera cam;
     //Initialize window (if width and height = 0 then fullscreen)
     initclgl.init("chapter 2 completed",800,640);
     //Get the first detected platform
@@ -87,8 +89,8 @@ int main( void )
     //Get the first added model
     model1 = marray.getModel(0);
     // create the gpu program
-    int error;
-    programID = shaders.createProgram(0,error);
+    shaders.createProgram(0);
+    programID = shaders.getProgram(0);
     // Print errors
     std::vector<const char*> log = initclgl.getErrLog();
     std::cout<<"Errors: "<<std::endl;
@@ -109,17 +111,27 @@ int main( void )
     for (size_t i = 0; i < log.size(); i++ )
         std::cout<<log[i]<<std::endl;
     shaders.clearLog();
-    GLuint MatrixID = glGetUniformLocation(programID, "MVP");
-    glm::mat4 Projection = glm::perspective(45.0f, 800.0f / 640.0f, 0.1f, 100.0f);
-    glm::mat4 View       = glm::lookAt(
+    //Associate with GLSL var
+    cam.setVar("MVP",&shaders,0);
+    //Set perspective
+    cam.setPerspective(45.0f,0.1f,100.0f,platform);
+    //Move camera
+    cam.move(glm::vec3(4,3,3));
+    //Set target to view
+    cam.target(&marray,0);
+    //Set look
+    cam.setLook(glm::mat4(1.0f),0);
+    //GLuint MatrixID = glGetUniformLocation(programID, "MVP");
+    //glm::mat4 Projection = glm::perspective(45.0f, 800.0f / 640.0f, 0.1f, 100.0f);
+    /*glm::mat4 View       = glm::lookAt(
                                 glm::vec3(4,3,3), // Camera is at (4,3,3), in World Space
                                 glm::vec3(0,0,0), // and looks at the origin
                                 glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
-                           );
+                           );*/
     // Model matrix : an identity matrix (model will be at the origin)
-    glm::mat4 Model      = glm::mat4(1.0f);
+    //glm::mat4 Model      = glm::mat4(1.0f);
     // Our ModelViewProjection : multiplication of our 3 matrices
-    glm::mat4 MVP        = Projection * View * Model; // Remember, matrix multiplication is the other way around
+    //glm::mat4 MVP        = Projection * View * Model; // Remember, matrix multiplication is the other way around
     ////////////////////////////////////////////////////////////////////////////////
     //Print the number of platforms
     std::cout<<"Platforms: "<<initclgl.getNumPlatforms()<<std::endl;
@@ -171,7 +183,7 @@ int main( void )
         glUseProgram(programID);
         // Send our transformation to the currently bound shader,
         // in the "MVP" uniform
-        glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+        cam.writeVar();
         // 1rst attribute buffer : vertices
         glEnableVertexAttribArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, *(model1 -> vertexBuffer));
