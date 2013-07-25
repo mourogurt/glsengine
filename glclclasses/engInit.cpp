@@ -210,8 +210,8 @@ int EngInit::init(const char* title, int width, int height)
 	else
     {
 		window = glfwCreateWindow(vidmode->width, vidmode->height, title, monitor, NULL);
-        wt = width;
-        ht = height;
+        wt = vidmode->width;
+        ht = vidmode->height;
     }
 	for (auto p = platforms.begin(); p<platforms.end(); p++)
     {
