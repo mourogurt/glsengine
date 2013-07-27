@@ -1,5 +1,6 @@
 #include "engCompute.hpp"
 #include <cstring>
+#include <iostream>
 
 EngComputeArray::EngComputeArray()
 {
@@ -84,14 +85,19 @@ int EngComputeArray::createProgram(int num)
         char const* VertexSourcePointer = sources[num].vertex_source;
         glShaderSource(VertexShaderID, 1, &VertexSourcePointer , NULL);
         glCompileShader(VertexShaderID);
-        if (err != 0)
-            glGetShaderiv(VertexShaderID, GL_COMPILE_STATUS, &err);
+        glGetShaderiv(VertexShaderID, GL_COMPILE_STATUS, &err);
         glGetShaderiv(VertexShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
         if ( InfoLogLength > 0 ){
-            char* VertexShaderErrorMessage = new char[InfoLogLength+1];
+            char* VertexShaderErrorMessage = new char[InfoLogLength];
             glGetShaderInfoLog(VertexShaderID, InfoLogLength, NULL, VertexShaderErrorMessage);
+            std::string str;
+            for (int i = 0; i < InfoLogLength; i++)
+            {
+                str.push_back(VertexShaderErrorMessage[i]);
+            }
+            str+='\0';
             log.writeLog("Add errlog");
-            errlog.writeLog(VertexShaderErrorMessage);
+            errlog.writeLog(str.c_str());
             delete [] VertexShaderErrorMessage;
             glDeleteShader(VertexShaderID);
             glDeleteProgram(ProgramID);
@@ -105,14 +111,19 @@ int EngComputeArray::createProgram(int num)
         char const * FragmentSourcePointer = sources[num].fragment_source;
         glShaderSource(FragmentShaderID, 1, &FragmentSourcePointer , NULL);
         glCompileShader(FragmentShaderID);
-        if (err != 0)
-            glGetShaderiv(FragmentShaderID, GL_COMPILE_STATUS, &err);
+        glGetShaderiv(FragmentShaderID, GL_COMPILE_STATUS, &err);
         glGetShaderiv(FragmentShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
         if ( InfoLogLength > 0 ){
-            char* FragmentShaderErrorMessage = new char[InfoLogLength+1];
+            char* FragmentShaderErrorMessage = new char[InfoLogLength];
             glGetShaderInfoLog(FragmentShaderID, InfoLogLength, NULL, FragmentShaderErrorMessage);
+            std::string str;
+            for (int i = 0; i < InfoLogLength; i++)
+            {
+                str.push_back(FragmentShaderErrorMessage[i]);
+            }
+            str+='\0';
             log.writeLog("Add errlog");
-            errlog.writeLog(FragmentShaderErrorMessage);
+            errlog.writeLog(str.c_str());
             delete [] FragmentShaderErrorMessage;
             glDeleteShader(FragmentShaderID);
             if (strcmp(sources[num].vertex_source,"") != 0)
@@ -123,14 +134,19 @@ int EngComputeArray::createProgram(int num)
         glAttachShader(ProgramID, FragmentShaderID);
     }
     glLinkProgram(ProgramID);
-    if (err != 0)
-        glGetProgramiv(ProgramID, GL_LINK_STATUS, &err);
+    glGetProgramiv(ProgramID, GL_LINK_STATUS, &err);
     glGetProgramiv(ProgramID, GL_INFO_LOG_LENGTH, &InfoLogLength);
     if ( InfoLogLength > 0 ){
-        char* ProgramErrorMessage = new char[InfoLogLength+1];
+        char* ProgramErrorMessage = new char[InfoLogLength];
         glGetProgramInfoLog(ProgramID, InfoLogLength, NULL, ProgramErrorMessage);
+        std::string str;
+        for (int i = 0; i < InfoLogLength; i++)
+        {
+            str.push_back(ProgramErrorMessage[i]);
+        }
+        str+='\0';
         log.writeLog("Add errlog");
-        errlog.writeLog(ProgramErrorMessage);
+        errlog.writeLog(str.c_str());
         delete [] ProgramErrorMessage;
         if (strcmp(sources[num].vertex_source,"") != 0)
             glDeleteShader(VertexShaderID);

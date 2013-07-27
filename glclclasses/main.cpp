@@ -75,8 +75,10 @@ int main( void )
     GLuint programID;
     //Camera class
     EngCamera cam;
+    //Setup context
+    initclgl.setHint({GLFW_CONTEXT_VERSION_MAJOR, 4,GLFW_CONTEXT_VERSION_MINOR, 3,GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE});
     //Initialize window (if width and height = 0 then fullscreen)
-    initclgl.init("chapter 3 completed",0,0);
+    initclgl.init("chapter 3 completed",800,640);
     //Get the first detected platform
     platform = initclgl.getEngPlatform(0);
     //Load functions in functors
@@ -89,8 +91,22 @@ int main( void )
     //Get the first added model
     model1 = marray.getModel(0);
     // create the gpu program
-    shaders.createProgram(0);
-    programID = shaders.getProgram(0);
+    int err = shaders.createProgram(0);
+    std::cout<<err<<std::endl;
+    if (shaders.getNumPrograms() == 0)
+    {
+        std::cout<<"Errors: "<<std::endl;
+        std::vector<const char*> log = shaders.getErrLog();
+        for (size_t i = 0; i < log.size(); i++ )
+            std::cout<<log[i]<<std::endl;
+        shaders.clearErrLog();
+        std::cout<<"Debug information:\n";
+        log = shaders.getLog();
+        for (size_t i = 0; i < log.size(); i++ )
+            std::cout<<log[i]<<std::endl;
+        shaders.clearLog();
+    } else
+        programID = shaders.getProgram(0);
     // Print errors
     std::vector<const char*> log = initclgl.getErrLog();
     std::cout<<"Errors: "<<std::endl;
@@ -116,7 +132,7 @@ int main( void )
     //Set perspective
     cam.setPerspective(45.0f,0.1f,100.0f,platform);
     //Move camera
-    cam.move(glm::vec3(4,3,3));
+    cam.move(glm::vec3(4.0f,3.0f,3.0f));
     //Set target to view
     cam.target(&marray,0);
     //Set look

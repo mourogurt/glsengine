@@ -22,7 +22,6 @@ public:
     GLuint getID();
 private:
     glm::vec3 findCenter (const EngModel*);
-    void setup();
     glm::vec3 pos;
     glm::vec3 look;
     bool origin;

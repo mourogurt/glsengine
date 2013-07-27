@@ -45,7 +45,11 @@ void EngCamera::setLook(glm::mat4 modin, bool upside)
 
 void EngCamera::writeVar()
 {
-    setup();
+    if (origin == false)
+        view = glm::lookAt(pos,look,glm::vec3(0.0f,1.0f,0.0f));
+    else
+        view = glm::lookAt(pos,look,glm::vec3(0.0f,-1.0f,0.0f));
+    mvp = proj * view * model;
     glUniformMatrix4fv(matrixID, 1, GL_FALSE, &mvp[0][0]);
 }
 
@@ -71,13 +75,4 @@ glm::vec3 EngCamera::findCenter (const EngModel* model)
     result[1] = (model->vertex_data[iymin] + model->vertex_data[iymax])/2.0f;
     result[2] = (model->vertex_data[izmin] + model->vertex_data[izmax])/2.0f;
     return result;
-}
-
-void EngCamera::setup()
-{
-    if (origin == false)
-        view = glm::lookAt(pos,look,glm::vec3(0,1,0));
-    else
-        view = glm::lookAt(pos,look,glm::vec3(0,-1,0));
-    mvp = proj * view * model;
 }
