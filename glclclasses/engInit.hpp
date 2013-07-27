@@ -149,7 +149,6 @@ public:
     void clearLog();
     void clearErrLog();
     void setHint (std::initializer_list<int>);
-    void setHint ();
     void destroy();
 private:
     int errFunc (int,const char*);
@@ -162,8 +161,9 @@ private:
 	EngLog errlog;
 	cl_uint numPlatforms;
 	std::vector<EngPlatform> platforms;
-	EngContextFunct funct;
+    cl_platform_id* pltmp;
+    EngContextFunct contextfunct;
 	void* usr_data;
-	cl_platform_id* pltmp;
+    std::initializer_list<int> hints;
 };
 #endif

@@ -1,4 +1,4 @@
-// Include standard headers
+ // Include standard headers
 #include <iostream>
 #include <fstream>
 
@@ -22,7 +22,7 @@ EngModel gen_model (void* in,void* out)
     glBindBuffer(GL_ARRAY_BUFFER, *vertexbuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
     EngModel rmodel;
-    rmodel.size_data = sizeof(g_vertex_buffer_data);
+    rmodel.size_data = sizeof(g_vertex_buffer_data)/sizeof(GLuint);
     rmodel.vertex_data = new GLfloat [rmodel.size_data];
     for (GLuint i = 0; i < rmodel.size_data; i++)
     {
@@ -33,6 +33,16 @@ EngModel gen_model (void* in,void* out)
     return rmodel;
 }
 
+void error_callback(int error, const char* description)
+{
+    fputs(description, stderr);
+}
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, GL_TRUE);
+}
+
 EngCompute load_shader (void* inv, void* outv)
 {
     EngCompute rshad;
@@ -41,17 +51,11 @@ EngCompute load_shader (void* inv, void* outv)
     in.open ("vertex.glsl");
     std::getline(in,source,'\0');
     in.close();
-    rshad.vertex_source = new char[source.size()+1];
-    for (size_t i = 0; i < source.size(); i++)
-        rshad.vertex_source[i] = source[i];
-    rshad.vertex_source += '\0';
+    rshad.vertex_source = source;
     in.open ("fragment.glsl");
     std::getline(in,source,'\0');
     in.close();
-    rshad.fragment_source = new char[source.size()+1];
-    for (size_t i = 0; i < source.size(); i++)
-        rshad.fragment_source[i] = source[i];
-    rshad.fragment_source += '\0';
+    rshad.fragment_source = source;
     return rshad;
 }
 
@@ -63,6 +67,13 @@ int main( void )
     EngModelArray marray;
     //Functor to load in Array
     EngGenModelFunct genfunct;
+    //Error functor
+    EngErrFunct errfunct;
+    //Key functor
+    EngKeyFunct keyfunct;
+    //Load functions
+    errfunct.func = error_callback;
+    keyfunct.func = key_callback;
     //Pointer to EngModel (vertex coordinate)
     EngModel* model1;
     //Pointer to platform (includes GLFWwindow*, cl_platform_id*, cl_device_id*, numDevices, cl_context)
@@ -75,10 +86,13 @@ int main( void )
     GLuint programID;
     //Camera class
     EngCamera cam;
+    //Set callbacks
+    initclgl.setCallback(errfunct);
     //Setup context
     initclgl.setHint({GLFW_CONTEXT_VERSION_MAJOR, 4,GLFW_CONTEXT_VERSION_MINOR, 3,GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE});
     //Initialize window (if width and height = 0 then fullscreen)
     initclgl.init("chapter 3 completed",800,640);
+    initclgl.setCallback(keyfunct);
     //Get the first detected platform
     platform = initclgl.getEngPlatform(0);
     //Load functions in functors
@@ -134,7 +148,7 @@ int main( void )
     //Move camera
     cam.move(glm::vec3(4.0f,3.0f,3.0f));
     //Set target to view
-    cam.target(&marray,0);
+    cam.target(model1);
     //Set look
     cam.setLook(glm::mat4(1.0f),0);
     ////////////////////////////////////////////////////////////////////////////////
@@ -181,7 +195,10 @@ int main( void )
     //Later will be in a engine render
     // Dark blue background
     glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
-    do{
+    //Move and look camera
+    cam.lookin();
+    while (!glfwWindowShouldClose(platform->window))
+    {
         // Clear the screen
         glClear( GL_COLOR_BUFFER_BIT );
         // Use program
@@ -208,7 +225,6 @@ int main( void )
         glfwPollEvents();
 
     } // Check if the ESC key was pressed or the window was closed
-    while( glfwGetKey(platform -> window, GLFW_KEY_ESCAPE) != GLFW_PRESS && (!glfwWindowShouldClose(platform -> window)));
     //Release all memory, contexts, devices, e.t.c
     marray.destroy();
     shaders.destroy();

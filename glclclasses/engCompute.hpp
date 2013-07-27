@@ -2,11 +2,12 @@
 #define ENGCOMPUTE_HPP
 #include "engInit.hpp"
 #include <deque>
+#include <string>
 
 struct EngCompute
 {
-    char* vertex_source;
-    char* fragment_source;
+    std::string vertex_source;
+    std::string fragment_source;
 };
 
 typedef EngCompute (*ENGLOADCOMPFUNC)(void*,void*);
@@ -33,7 +34,6 @@ public:
     void clearLog();
     void clearErrLog();
 private:
-    void clearSource (int);
     void clearProgram (int);
     std::deque<EngCompute> sources;
     std::deque<GLuint> programs;

@@ -1,4 +1,5 @@
 #include "engCamera.hpp"
+#include <iostream>
 
 void EngCamera::setVar(char * var,EngComputeArray* arr, size_t num)
 {
@@ -43,12 +44,17 @@ void EngCamera::setLook(glm::mat4 modin, bool upside)
     origin = upside;
 }
 
-void EngCamera::writeVar()
+void EngCamera::lookin()
 {
     if (origin == false)
         view = glm::lookAt(pos,look,glm::vec3(0.0f,1.0f,0.0f));
     else
         view = glm::lookAt(pos,look,glm::vec3(0.0f,-1.0f,0.0f));
+}
+
+void EngCamera::writeVar()
+{
+
     mvp = proj * view * model;
     glUniformMatrix4fv(matrixID, 1, GL_FALSE, &mvp[0][0]);
 }
@@ -60,8 +66,8 @@ GLuint EngCamera::getID()
 
 glm::vec3 EngCamera::findCenter (const EngModel* model)
 {
-    size_t ixmin = 0,ixmax = 0,iymin = 0,iymax = 0,izmin = 0,izmax = 0;
-    for (size_t i = 0; i < model->size_data; i+=3)
+    size_t ixmin = 0,ixmax = 0,iymin = 1,iymax = 1,izmin = 2,izmax = 2;
+    for (size_t i = 0; i < model->size_data-2; i+=3)
     {
         if (model->vertex_data[i] < model->vertex_data[ixmin]) ixmin = i;
         if (model->vertex_data[i] > model->vertex_data[ixmax]) ixmax = i;

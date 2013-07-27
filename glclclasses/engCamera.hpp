@@ -18,6 +18,7 @@ public:
     void move(glm::vec3);
     void setPerspective (GLfloat,GLfloat,GLfloat,const EngPlatform*);
     void setLook(glm::mat4,bool);
+    void lookin();
     void writeVar();
     GLuint getID();
 private:

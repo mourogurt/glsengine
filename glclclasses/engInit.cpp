@@ -18,76 +18,76 @@ void EngLog::clearLog()
 
 void EngInit::setCallback(EngErrFunct callback)
 {
-	glfwSetErrorCallback(callback.func);
+    glfwSetErrorCallback(callback.func);
 }
 
 void EngInit::setCallback (EngWinPosFunct callback)
 {
-	glfwSetWindowPosCallback(window,callback.func);
+    glfwSetWindowPosCallback(window,callback.func);
 }
 
 void EngInit::setCallback (EngWinSizeFunct callback)
 {
-	glfwSetWindowSizeCallback(window,callback.func);
+    glfwSetWindowSizeCallback(window,callback.func);
 }
 
 void EngInit::setCallback (EngWinCloseFunct callback)
 {
-	glfwSetWindowCloseCallback(window,callback.func);
+    glfwSetWindowCloseCallback(window,callback.func);
 }
 
 void EngInit::setCallback (EngWinRefFunct callback)
 {
-	glfwSetWindowRefreshCallback(window,callback.func);
+    glfwSetWindowRefreshCallback(window,callback.func);
 }
 void EngInit::setCallback (EngWinFocFunct callback)
 {
-	glfwSetWindowFocusCallback(window,callback.func);
+    glfwSetWindowFocusCallback(window,callback.func);
 }
 
 void EngInit::setCallback (EngWinIconFunct callback)
 {
-	glfwSetWindowIconifyCallback(window,callback.func);
+    glfwSetWindowIconifyCallback(window,callback.func);
 }
 
 void EngInit::setCallback (EngMouseButFunct callback)
 {
-	glfwSetMouseButtonCallback(window,callback.func);
+    glfwSetMouseButtonCallback(window,callback.func);
 }
 
 void EngInit::setCallback (EngCurPosFunct callback)
 {
-	glfwSetCursorPosCallback(window,callback.func);
+    glfwSetCursorPosCallback(window,callback.func);
 }
 
 void EngInit::setCallback (EngCurEnterFunct callback)
 {
-	glfwSetCursorEnterCallback(window,callback.func);
+    glfwSetCursorEnterCallback(window,callback.func);
 }
 
 void EngInit::setCallback (EngScrollFunct callback)
 {
-	glfwSetScrollCallback(window,callback.func);
+    glfwSetScrollCallback(window,callback.func);
 }
 
 void EngInit::setCallback (EngKeyFunct callback)
 {
-	glfwSetKeyCallback(window,callback.func);
+    glfwSetKeyCallback(window,callback.func);
 }
 
 void EngInit::setCallback (EngCharFunct callback)
 {
-	glfwSetCharCallback(window,callback.func);
+    glfwSetCharCallback(window,callback.func);
 }
 
 void EngInit::setCallback (EngMonitorFunct callback)
 {
-	glfwSetMonitorCallback(callback.func);
+    glfwSetMonitorCallback(callback.func);
 }
 
-void EngInit::setCallback(EngContextFunct functin, void* data)
+void EngInit::setCallback(EngContextFunct callback, void* data)
 {
-	funct=functin;
+    contextfunct=callback;
 	usr_data=data;
 }
 
@@ -125,13 +125,7 @@ int EngInit::errFunc(int err,const char* str)
 
 void EngInit::setHint(std::initializer_list<int> args)
 {
-	for (auto p=args.begin(); p!=args.end(); p+=2) 
-		glfwWindowHint(*p,*(p+1));
-}
-
-void EngInit::setHint()
-{
-	glfwDefaultWindowHints();
+    hints = args;
 }
 
 EngInit::EngInit()
@@ -145,7 +139,7 @@ EngInit::EngInit()
     errlog.clearLog();
 	numPlatforms = 0;
 	platforms.clear();
-	funct.func = nullptr;
+    contextfunct.func = nullptr;
     log.writeLog("EngInit() OK");
 }
 
@@ -191,6 +185,11 @@ int EngInit::init(const char* title, int width, int height)
         errlog.writeLog("glfwInit error");
 		return GLFW_INIT_ERROR;
 	}
+    if (hints.size() > 0)
+        for (auto p=hints.begin(); p!=hints.end(); p+=2)
+            glfwWindowHint(*p,*(p+1));
+    else
+        glfwDefaultWindowHints();
 	monitor = glfwGetPrimaryMonitor();
 	vidmode = (GLFWvidmode*)glfwGetVideoMode (monitor);
 	if (window != nullptr)
@@ -289,7 +288,7 @@ cl_int EngInit::createContext(int num)
 		return ENG_UNKNOW_PLATFORM;
 	#endif
 	cl_int err;
-	platforms[num].context = clCreateContext(properties,platforms[num].numDevices,platforms[num].devices,funct.func,usr_data,&err);
+    platforms[num].context = clCreateContext(properties,platforms[num].numDevices,platforms[num].devices,contextfunct.func,usr_data,&err);
     errFunc(err,"clCreateContext error: ");
 	if (err!=CL_SUCCESS)
 	{
