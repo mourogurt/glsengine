@@ -72,8 +72,8 @@ Buffer* ConcurentQueue::pop()
 		if ((critical_queue) && (max_size!=0))
 		{
 			Buffer* retbuf = new Buffer;
-			retbuf->buff = new char;
-			retbuf->buff[0] = '\0';
+            retbuf->buff = new char;
+            retbuf->buff[0] = '\0';
 			retbuf->buffsize = 1;
 			mlock.unlock();
 			push(retbuf);
