@@ -23,6 +23,7 @@ struct EngRenderData
     ENG_RENDER_FUNCTION_POST_LOOP func_post;
     Buffer* indata;
     ConcurentQueue outdata;
+    EngContextThreads* current_controller;
 };
 
 class EngRender
@@ -31,12 +32,14 @@ public:
     EngRender();
     void render();
     void setPlatform (EngPlatform*);
+    void setContextController(EngContextThreads*);
     void setRenderFunction(unsigned int,void*);
     void setInData (Buffer*);
     void stopRender();
     void getOutData(std::vector<Buffer*>&);
 private:
     EngRenderData props;
+
 };
 
 void thread_func(EngRenderData*);

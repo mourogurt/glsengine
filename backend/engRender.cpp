@@ -14,6 +14,11 @@ void EngRender::setPlatform(EngPlatform *platformin)
     props.platform = platformin;
 }
 
+void EngRender::setContextController(EngContextThreads *controller)
+{
+    props.current_controller = controller;
+}
+
 void EngRender::setRenderFunction(unsigned int num,void* funcin)
 {
     switch (num)
@@ -56,7 +61,8 @@ void EngRender::render()
 {
     props.thread_launched = 1;
     props.render_thread = std::thread(thread_func,&props);
-    glfwMakeContextCurrent(nullptr);
+    props.current_controller->set_current_thread(props.render_thread.get_id());
+    props.current_controller->run_thread();
 }
 
 void thread_func (EngRenderData *render)
@@ -77,6 +83,7 @@ void thread_func (EngRenderData *render)
         if (render->func_loop != nullptr)
         {
             outpack = nullptr;
+            render->current_controller->run_thread();
             render->func_loop(render->platform,render->indata,outpack,to_loop,to_post_loop);
             if (outpack != nullptr)
                 render->outdata.push(outpack);

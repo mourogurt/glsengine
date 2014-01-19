@@ -1,5 +1,23 @@
 #include "engInit.hpp"
 
+void EngContextThreads::set_current_thread(std::thread::id thrd_id)
+{
+    current_thread = thrd_id;
+}
+
+void EngContextThreads::set_context(GLFWwindow *context_window)
+{
+    window = context_window;
+}
+
+void EngContextThreads::run_thread()
+{
+    if (std::this_thread::get_id() != current_thread)
+        glfwMakeContextCurrent(NULL);
+    else
+        glfwMakeContextCurrent(window);
+}
+
 void EngInit::setCallback(unsigned int num, void *func, void *data)
 {
     switch (num)
@@ -129,7 +147,7 @@ int EngInit::init(const char* title, int width, int height)
 			delete [] tmp.devices;
 			return err;
 		}
-		platforms.push_back(tmp);
+        platforms.push_back(tmp);
 	}
 	CLInit = true;
 	if (!glfwInit())
@@ -171,15 +189,17 @@ int EngInit::init(const char* title, int width, int height)
         (*p).height = ht;
         (*p).width = wt;
     }
-	glfwMakeContextCurrent(window);
-	GLenum GlewInitResult = glewInit();
+    current_controller.set_context(window);
+    current_controller.set_current_thread(std::this_thread::get_id());
+    current_controller.run_thread();
+    GLenum GlewInitResult = glewInit();
 	if (GLEW_OK!=GlewInitResult)
 	{
         log.writeLog(std::string("Add errlog"));
         errlog.writeLog(std::string(((const char*)glewGetErrorString(GlewInitResult))));
         glfwDestroyWindow(window);
 		return GLEW_INIT_ERROR;
-	}
+    }
 	GLInit = true;
     log.writeLog(std::string("Init(const char*,int,int) OK"));
 	return ENG_INIT_OK;
@@ -214,7 +234,8 @@ cl_uint EngInit::getNumPlatforms()
 
 cl_int EngInit::createContext(int num)
 {
-	#ifdef __linux__
+
+    #ifdef __linux__
 		cl_context_properties properties[] = { 
 			CL_GL_CONTEXT_KHR, (cl_context_properties) glXGetCurrentContext(),
 			CL_GLX_DISPLAY_KHR, (cl_context_properties) glXGetCurrentDisplay(), 
@@ -237,7 +258,7 @@ cl_int EngInit::createContext(int num)
         log.writeLog(std::string("Add errlog"));
         errlog.writeLog(std::string("Unsupported platform"));
 		return ENG_UNKNOW_PLATFORM;
-	#endif
+    #endif
 	cl_int err;
     platforms[num].context = clCreateContext(properties,platforms[num].numDevices,platforms[num].devices,contextfunc,usr_data,&err);
     errFunc(err,"clCreateContext error: ");
@@ -252,6 +273,11 @@ cl_int EngInit::createContext(int num)
 EngPlatform* EngInit::getEngPlatform(int num)
 {
 	return &(platforms.at(num));
+}
+
+EngContextThreads* EngInit::getContextController()
+{
+    return &current_controller;
 }
 
 int EngInit::destroyContext(int num)

@@ -20,6 +20,4 @@ LIBS += -lbackend -lsystem
 QMAKE_CXXFLAGS += -std=c++11
 unix: CONFIG += link_pkgconfig
 unix: PKGCONFIG += glfw3
-unix: PKGCONFIG += gl
-unix: PKGCONFIG += glew
-unix|win32: LIBS += -lOpenCL
+unix|win32: LIBS += -lOpenCL -lGL -lGLEW
