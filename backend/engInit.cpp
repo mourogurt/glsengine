@@ -2,12 +2,21 @@
 
 void EngContextThreads::set_current_thread(std::thread::id thrd_id)
 {
+    locker.lock();
     current_thread = thrd_id;
+    locker.unlock();
 }
 
 void EngContextThreads::set_context(GLFWwindow *context_window)
 {
+    locker.lock();
     window = context_window;
+    locker.unlock();
+}
+
+std::thread::id EngContextThreads::get_context_thread()
+{
+    return current_thread;
 }
 
 void EngContextThreads::run_thread()

@@ -12,7 +12,6 @@
 #include <sstream>
 #include <thread>
 #include <mutex>
-#include <condition_variable>
 #include "../system/log.h"
 
 #define ENG_INIT_OK 0
@@ -57,10 +56,12 @@ public:
    void set_current_thread (std::thread::id);
    void set_context (GLFWwindow*);
    void run_thread ();
+   std::thread::id get_context_thread();
 private:
    std::vector<std::thread::id> threads;
    std::thread::id current_thread;
    GLFWwindow* window;
+   std::mutex locker;
 };
 
 class EngInit
