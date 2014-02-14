@@ -23,7 +23,7 @@ struct EngRenderData
     ENG_RENDER_FUNCTION_POST_LOOP func_post;
     Buffer* indata;
     ConcurentQueue outdata;
-    EngContextThreads* current_controller;
+    ContextMutex* current_controller;
 };
 
 class EngRender
@@ -32,7 +32,7 @@ public:
     EngRender();
     void render();
     void setPlatform (EngPlatform*);
-    void setContextController(EngContextThreads*);
+    void setController (ContextMutex*);
     void setRenderFunction(unsigned int,void*);
     void setInData (Buffer*);
     void stopRender();

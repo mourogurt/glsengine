@@ -24,10 +24,9 @@ void ConcurentQueue::push(Buffer* bufin)
 	if (queue_size == max_size)
 	{
 		if ((!critical_queue) && (max_size!=0))
-			wait_cond.wait(mlock,[&](){return queue_size <= max_size;});
+            wait_cond.wait(mlock,[&](){return queue_size < max_size;});
 		if ((critical_queue) && (max_size!=0))
 		{
-			mlock.unlock();
 			Buffer* retbuf = pop();
 			mlock.lock();
 			if (retbuf != NULL)

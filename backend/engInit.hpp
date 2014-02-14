@@ -13,6 +13,7 @@
 #include <thread>
 #include <mutex>
 #include "../system/log.h"
+#include "../system/contextmutex.hpp"
 
 #define ENG_INIT_OK 0
 #define GLFW_INIT_ERROR 1
@@ -43,25 +44,11 @@ struct EngPlatform
 {
     int width;
     int height;
-	GLFWwindow* window;
+    GLFWwindow* window;
 	cl_platform_id* parent_platform;
 	cl_device_id* devices;
 	cl_uint numDevices;
 	cl_context context;
-};
-
-class EngContextThreads
-{
-public:
-   void set_current_thread (std::thread::id);
-   void set_context (GLFWwindow*);
-   void run_thread ();
-   std::thread::id get_context_thread();
-private:
-   std::vector<std::thread::id> threads;
-   std::thread::id current_thread;
-   GLFWwindow* window;
-   std::mutex locker;
 };
 
 class EngInit
@@ -72,7 +59,7 @@ public:
     cl_uint getNumPlatforms ();
     cl_int createContext (int);
     EngPlatform* getEngPlatform (int);
-    EngContextThreads* getContextController();
+    ContextMutex* getLocker ();
     int destroyContext (int);
     void setCallback(unsigned int num, void *func, void *data = nullptr);
     std::vector<std::string> getLog();
@@ -81,8 +68,8 @@ public:
     void destroy();
 private:
     int errFunc (int,const char*);
-	bool GLInit;
-	bool CLInit;
+    bool GLInit;
+    bool CLInit;
 	GLFWvidmode* vidmode;
 	GLFWmonitor* monitor;
 	GLFWwindow* window;
@@ -94,6 +81,6 @@ private:
     ENG_CL_CALLBACK contextfunc;
 	void* usr_data;
     std::initializer_list<int> hints;
-    EngContextThreads current_controller;
+    ContextMutex current_locker;
 };
 #endif

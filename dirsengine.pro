@@ -1,5 +1,6 @@
 TEMPLATE = subdirs
 SUBDIRS = system  \
 	  backend \
-	  sample
+	  sample \
+    example2
 	  

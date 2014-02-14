@@ -1,32 +1,5 @@
 #include "engInit.hpp"
 
-void EngContextThreads::set_current_thread(std::thread::id thrd_id)
-{
-    locker.lock();
-    current_thread = thrd_id;
-    locker.unlock();
-}
-
-void EngContextThreads::set_context(GLFWwindow *context_window)
-{
-    locker.lock();
-    window = context_window;
-    locker.unlock();
-}
-
-std::thread::id EngContextThreads::get_context_thread()
-{
-    return current_thread;
-}
-
-void EngContextThreads::run_thread()
-{
-    if (std::this_thread::get_id() != current_thread)
-        glfwMakeContextCurrent(NULL);
-    else
-        glfwMakeContextCurrent(window);
-}
-
 void EngInit::setCallback(unsigned int num, void *func, void *data)
 {
     switch (num)
@@ -120,6 +93,7 @@ EngInit::EngInit()
 	numPlatforms = 0;
 	platforms.clear();
     contextfunc = nullptr;
+    current_locker.init(1,0);
     log.writeLog(std::string("EngInit() OK"));
 }
 
@@ -148,7 +122,7 @@ int EngInit::init(const char* title, int width, int height)
 			return err;
 		}
 		tmp.devices = new cl_device_id[tmp.numDevices];
-		clGetDeviceIDs(*(tmp.parent_platform) , CL_DEVICE_TYPE_ALL, tmp.numDevices, tmp.devices, NULL);
+        err = clGetDeviceIDs(*(tmp.parent_platform) , CL_DEVICE_TYPE_ALL, tmp.numDevices, tmp.devices, NULL);
         errFunc(err,"clCreateContext error: ");
 		if (err!=CL_SUCCESS)
 		{
@@ -158,7 +132,7 @@ int EngInit::init(const char* title, int width, int height)
 		}
         platforms.push_back(tmp);
 	}
-	CLInit = true;
+    CLInit = true;
 	if (!glfwInit())
 	{
         log.writeLog(std::string("Add errlog"));
@@ -198,9 +172,7 @@ int EngInit::init(const char* title, int width, int height)
         (*p).height = ht;
         (*p).width = wt;
     }
-    current_controller.set_context(window);
-    current_controller.set_current_thread(std::this_thread::get_id());
-    current_controller.run_thread();
+    current_locker.lock(window);
     GLenum GlewInitResult = glewInit();
 	if (GLEW_OK!=GlewInitResult)
 	{
@@ -209,7 +181,7 @@ int EngInit::init(const char* title, int width, int height)
         glfwDestroyWindow(window);
 		return GLEW_INIT_ERROR;
     }
-	GLInit = true;
+    GLInit = true;
     log.writeLog(std::string("Init(const char*,int,int) OK"));
 	return ENG_INIT_OK;
 }
@@ -230,7 +202,10 @@ void EngInit::destroy()
 	if (GLInit == true)
 	{
 		if (window!=nullptr)
+        {
+            current_locker.unlock();
 			glfwDestroyWindow(window);
+        }
 		glfwTerminate();
 		GLInit = false;
 	}
@@ -284,9 +259,9 @@ EngPlatform* EngInit::getEngPlatform(int num)
 	return &(platforms.at(num));
 }
 
-EngContextThreads* EngInit::getContextController()
+ContextMutex* EngInit::getLocker()
 {
-    return &current_controller;
+    return &current_locker;
 }
 
 int EngInit::destroyContext(int num)

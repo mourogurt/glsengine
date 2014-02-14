@@ -15,11 +15,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         glfwSetWindowShouldClose(window, GL_TRUE);
 }
 
-/*void pre_render_callback (const EngPlatform *platform,const Buffer *indata, Buffer *outdata, Buffer *to_loop, Buffer *to_post)
-{
-
-}*/
-
 void render_callback (const EngPlatform *platform,const Buffer *indata, Buffer *outdata, Buffer *from_pre, Buffer *to_post)
 {
     GLfloat red[] = { 1.0f, 0.0f, 0.0f, 1.0f };
@@ -35,7 +30,6 @@ int main( void )
     initclgl.init("Simple app",800,640);
     initclgl.setCallback(KEYFUN,(void*)key_callback);
     platform = initclgl.getEngPlatform(0);
-    auto controller = initclgl.getContextController();
     std::vector<std::string> log = initclgl.getErrLog();
     std::cout<<"Errors: "<<std::endl;
     for (size_t i = 0; i < log.size(); i++ )
@@ -45,7 +39,6 @@ int main( void )
     for (size_t i = 0; i < log.size(); i++ )
         std::cout<<log[i]<<std::endl;
     render.setPlatform(platform);
-    render.setContextController(controller);
     render.setRenderFunction(ENGFUNCLOOP,(void*)render_callback);
     render.render();
     while (!glfwWindowShouldClose(platform->window))

@@ -14,9 +14,9 @@ void EngRender::setPlatform(EngPlatform *platformin)
     props.platform = platformin;
 }
 
-void EngRender::setContextController(EngContextThreads *controller)
+void EngRender::setController(ContextMutex *locker)
 {
-    props.current_controller = controller;
+    props.current_controller = locker;
 }
 
 void EngRender::setRenderFunction(unsigned int num,void* funcin)
@@ -54,47 +54,81 @@ void EngRender::stopRender()
         props.thread_launched = 0;
         if (props.render_thread.joinable())
             props.render_thread.join();
+        props.current_controller->lock(props.platform->window);
     }
 }
 
 void EngRender::render()
 {
+    props.current_controller->unlock();
     props.thread_launched = 1;
     props.render_thread = std::thread(thread_func,&props);
-    props.current_controller->set_current_thread(props.render_thread.get_id());
-    props.current_controller->run_thread();
 }
 
 void thread_func (EngRenderData *render)
 {
-    Buffer *outpack = nullptr;
-    Buffer *to_loop = nullptr;
-    Buffer *to_post_pre = nullptr;
-    Buffer *to_post_loop = nullptr;
+    Buffer *outpack = new Buffer;
+    outpack->buff = nullptr;
+    Buffer *to_loop = new Buffer;
+    to_loop->buff = nullptr;
+    Buffer *to_post_pre = new Buffer;
+    to_post_pre->buff = nullptr;
+    Buffer *to_post_loop = new Buffer;
+    to_post_loop->buff = nullptr;
     if (render->func_pre != nullptr)
     {
+        render->current_controller->lock(render->platform->window);
         render->func_pre(render->platform,render->indata, outpack, to_loop, to_post_pre);
-    if (outpack != nullptr)
+        render->current_controller->unlock();
+    if (outpack->buff != nullptr)
         render->outdata.push(outpack);
+    else
+        delete [] outpack;
     }
-    glfwMakeContextCurrent(render->platform->window);
     while ((render->thread_launched) && (!glfwWindowShouldClose(render->platform->window)))
     {
         if (render->func_loop != nullptr)
         {
-            outpack = nullptr;
-            render->current_controller->run_thread();
+            outpack = new Buffer;
+            outpack->buff = nullptr;
+            render->current_controller->lock(render->platform->window);
             render->func_loop(render->platform,render->indata,outpack,to_loop,to_post_loop);
-            if (outpack != nullptr)
+            render->current_controller->unlock();
+            if (outpack->buff != nullptr)
                 render->outdata.push(outpack);
+            else
+                delete [] outpack;
         }
         glfwSwapBuffers(render->platform ->window);
     }
     if (render->func_post != nullptr)
     {
-        outpack = nullptr;
+        outpack = new Buffer;
+        outpack->buff = nullptr;
+        render->current_controller->lock(render->platform->window);
         render->func_post(render->platform,render->indata,outpack,to_post_pre,to_post_loop);
-        if (outpack != nullptr)
+        render->current_controller->unlock();
+        if (outpack->buff != nullptr)
             render->outdata.push(outpack);
+        else
+            delete [] outpack;
+    }
+    if (to_loop != NULL)
+    {
+        if (to_loop->buff != nullptr)
+            delete [] to_loop->buff;
+        delete [] to_loop;
+    }
+    if (to_post_pre != NULL)
+    {
+        if (to_post_pre->buff != nullptr)
+            delete [] to_post_pre->buff;
+        delete [] to_post_pre;
+    }
+    if (to_post_loop != NULL)
+    {
+        if (to_post_loop->buff != nullptr)
+            delete [] to_post_loop->buff;
+        delete [] to_post_loop;
     }
 }
