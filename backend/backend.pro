@@ -8,3 +8,6 @@ SOURCES = engInit.cpp \
     engObject.cpp
 QMAKE_CXXFLAGS += -std=c++11
 
+OTHER_FILES += \
+    ../docs/roadmap.txt
+
