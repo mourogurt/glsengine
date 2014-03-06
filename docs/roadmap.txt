@@ -1,0 +1,23 @@
+EngInit:
+* Initialize engine with two context for renderer and for control (not started)
+* Check for memory leak / optimization to merge into master branch (not started)
+EngObject:
+* Vertex buffer objects (started by maxis11)
+* Uniform buffer objects (not started)
+* Buffers (bot started)
+* Samplers (not started)
+* Textures (not started)
+* OpenCL buffers (not started)
+* OpenCL textures (not started)
+* OpenCL kernels (not started)
+* Check for memory leak / optimization to merge into master branch (not started)
+EngRender:
+* Use second context to draw (not started)
+* Change draw system in render (give pre/loop/post functions implementation to engine(When EngScene will be finish)) (not started)
+* Check for memory leak / optimization to merge into master branch (not started)
+EngCustomShader : not stated
+EngGeneratedShader : not started
+EngScene : not started
+Documentation:
+* Plan for developing (started by maxis11)
+* API documentation (started by maxis11)
