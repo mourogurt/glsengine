@@ -8,40 +8,40 @@ void EngInit::setCallback(unsigned int num, void *func, void *data)
         glfwSetErrorCallback((GLFWerrorfun)func);
         break;
     case 2:
-        glfwSetWindowPosCallback(window,(GLFWwindowposfun)func);
+        glfwSetWindowPosCallback(render_window,(GLFWwindowposfun)func);
         break;
     case 3:
-        glfwSetWindowSizeCallback(window,(GLFWwindowsizefun)func);
+        glfwSetWindowSizeCallback(render_window,(GLFWwindowsizefun)func);
         break;
     case 4:
-        glfwSetWindowCloseCallback(window,(GLFWwindowclosefun)func);
+        glfwSetWindowCloseCallback(render_window,(GLFWwindowclosefun)func);
         break;
     case 5:
-        glfwSetWindowRefreshCallback(window,(GLFWwindowrefreshfun)func);
+        glfwSetWindowRefreshCallback(render_window,(GLFWwindowrefreshfun)func);
         break;
     case 6:
-        glfwSetWindowFocusCallback(window,(GLFWwindowfocusfun)func);
+        glfwSetWindowFocusCallback(render_window,(GLFWwindowfocusfun)func);
         break;
     case 7:
-        glfwSetWindowIconifyCallback(window,(GLFWwindowiconifyfun)func);
+        glfwSetWindowIconifyCallback(render_window,(GLFWwindowiconifyfun)func);
         break;
     case 8:
-        glfwSetMouseButtonCallback(window,(GLFWmousebuttonfun)func);
+        glfwSetMouseButtonCallback(render_window,(GLFWmousebuttonfun)func);
         break;
     case 9:
-        glfwSetCursorPosCallback(window,(GLFWcursorposfun)func);
+        glfwSetCursorPosCallback(render_window,(GLFWcursorposfun)func);
         break;
     case 10:
-        glfwSetCursorEnterCallback(window,(GLFWcursorenterfun)func);
+        glfwSetCursorEnterCallback(render_window,(GLFWcursorenterfun)func);
         break;
     case 11:
-        glfwSetScrollCallback(window,(GLFWscrollfun)func);
+        glfwSetScrollCallback(render_window,(GLFWscrollfun)func);
         break;
     case 12:
-        glfwSetKeyCallback(window,(GLFWkeyfun)func);
+        glfwSetKeyCallback(render_window,(GLFWkeyfun)func);
         break;
     case 13:
-        glfwSetCharCallback(window,(GLFWcharfun)func);
+        glfwSetCharCallback(render_window,(GLFWcharfun)func);
         break;
     case 14:
         glfwSetMonitorCallback((GLFWmonitorfun)func);
@@ -89,7 +89,7 @@ EngInit::EngInit()
 	CLInit = false;
 	vidmode = nullptr;
 	monitor = nullptr;
-	window = nullptr;
+    render_window = nullptr;
 	numPlatforms = 0;
 	platforms.clear();
     contextfunc = nullptr;
@@ -146,39 +146,44 @@ int EngInit::init(const char* title, int width, int height)
         glfwDefaultWindowHints();
 	monitor = glfwGetPrimaryMonitor();
 	vidmode = (GLFWvidmode*)glfwGetVideoMode (monitor);
-	if (window != nullptr)
+    if (render_window != nullptr)
 	{
         log.writeLog("Add errlog");
         errlog.writeLog(std::string("GLFWwindow already created"));
-		return GLFW_CREATE_WINDOW_ERROR;
+        return GLFW_CREATE_WINDOW_ERROR;
 	}
 	glewExperimental=true;
     int ht,wt;
+    glfwWindowHint( GLFW_VISIBLE, GL_FALSE );
+    controll_window = glfwCreateWindow( 1, 1, "Thread window", NULL, NULL );
+    glfwWindowHint( GLFW_VISIBLE, GL_TRUE );
 	if ((height!= 0) && (width != 0))
     {
-		window = glfwCreateWindow(width, height, title, NULL, NULL);
+         render_window = glfwCreateWindow(width, height, title, NULL, controll_window);
         wt = width;
         ht = height;
     }
 	else
     {
-		window = glfwCreateWindow(vidmode->width, vidmode->height, title, monitor, NULL);
+        render_window = glfwCreateWindow(vidmode->width, vidmode->height, title, monitor, controll_window);
         wt = vidmode->width;
         ht = vidmode->height;
     }
 	for (auto p = platforms.begin(); p<platforms.end(); p++)
     {
-        (*p).window = window;
+        (*p).render_window = render_window;
+        (*p).controll_window = controll_window;
         (*p).height = ht;
         (*p).width = wt;
     }
-    current_locker.lock(window);
+    current_locker.lock(controll_window);
     GLenum GlewInitResult = glewInit();
 	if (GLEW_OK!=GlewInitResult)
 	{
         log.writeLog(std::string("Add errlog"));
         errlog.writeLog(std::string(((const char*)glewGetErrorString(GlewInitResult))));
-        glfwDestroyWindow(window);
+        glfwDestroyWindow(render_window);
+        glfwDestroyWindow(controll_window);
 		return GLEW_INIT_ERROR;
     }
     GLInit = true;
@@ -201,10 +206,15 @@ void EngInit::destroy()
 	}
 	if (GLInit == true)
 	{
-		if (window!=nullptr)
+        if (render_window!=NULL)
         {
             current_locker.unlock();
-			glfwDestroyWindow(window);
+            glfwDestroyWindow(render_window);
+        }
+        if (controll_window!=NULL)
+        {
+            current_locker.unlock();
+            glfwDestroyWindow(controll_window);
         }
 		glfwTerminate();
 		GLInit = false;

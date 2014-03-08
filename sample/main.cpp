@@ -38,10 +38,12 @@ int main( void )
     std::cout<<"Debug information:\n";
     for (size_t i = 0; i < log.size(); i++ )
         std::cout<<log[i]<<std::endl;
+    auto controller = initclgl.getLocker();
     render.setPlatform(platform);
+    render.setController(controller);
     render.setRenderFunction(ENGFUNCLOOP,(void*)render_callback);
     render.render();
-    while (!glfwWindowShouldClose(platform->window))
+    while (!glfwWindowShouldClose(platform->controll_window))
             glfwWaitEvents();
     render.stopRender();
     initclgl.destroy();

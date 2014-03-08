@@ -7,6 +7,7 @@ using namespace std;
 
 void pre_render_func (const EngPlatform*,const Buffer*, Buffer*, Buffer*, Buffer*);
 void loop_func (const EngPlatform*,const Buffer*, Buffer*, Buffer*, Buffer*);
+void post_loop_func (const EngPlatform*,const Buffer*, Buffer*, Buffer*, Buffer*);
 
 void key_callback(GLFWwindow*, int, int, int, int);
 
@@ -50,6 +51,7 @@ int main()
     object.init();
     render.setRenderFunction(ENGFUNCPRELOOP,(void*)pre_render_func);
     render.setRenderFunction(ENGFUNCLOOP,(void*)loop_func);
+    render.setRenderFunction(ENGFUNCPOSTLOOP,(void*)post_loop_func);
     object.loadShader(VertexShaderCode,GL_VERTEX_SHADER);
     object.loadShader(FragmentShaderCode,GL_FRAGMENT_SHADER);
     object.createGPUShader();
@@ -63,8 +65,9 @@ int main()
     buf.buff = (char*)&object;
     buf.buffsize = sizeof(EngObject);
     render.setInData(&buf);
+    glFlush();
     render.render();
-    while (!glfwWindowShouldClose(platform->window))
+    while (!glfwWindowShouldClose(platform->render_window))
         glfwWaitEvents();
     render.stopRender();
     object.clearAll();
@@ -74,6 +77,21 @@ int main()
 
 void pre_render_func(const EngPlatform *platform,const Buffer *indata, Buffer *outdata, Buffer *to_loop, Buffer *to_post)
 {
+    /*static const GLfloat g_vertex_buffer_data[] = {
+       -1.0f, -1.0f, 0.0f, 1.0f,
+       1.0f, -1.0f, 0.0f, 1.0f,
+       0.0f,  1.0f, 0.0f, 1.0f
+    };
+    EngObject* objin = (EngObject*) indata->buff;
+    objin->createGPUShader();
+    std::vector<std::string> errlog = objin->getErrLog();
+    for (unsigned int i = 0; i < errlog.size(); i++)
+       cout<<errlog[i]<<endl;
+    auto var_index = objin->loadShaderVar("vertexPosition_modelspace");
+    auto index = objin->loadData((void*)g_vertex_buffer_data,sizeof(g_vertex_buffer_data),var_index);
+    objin->createGPUData(index);*/
+    EngObject* objin = (EngObject*) indata->buff;
+    objin->createVAO();
     glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
 }
 
@@ -82,6 +100,12 @@ void loop_func (const EngPlatform *platform,const Buffer *indata, Buffer *outdat
     glClear( GL_COLOR_BUFFER_BIT );
     EngObject* objin = (EngObject*) indata->buff;
     objin->render();
+}
+
+void post_loop_func (const EngPlatform *platform,const Buffer *indata, Buffer *outdata, Buffer *from_pre, Buffer *from_loop)
+{
+    EngObject* objin = (EngObject*) indata->buff;
+    objin->removeVAO();
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)

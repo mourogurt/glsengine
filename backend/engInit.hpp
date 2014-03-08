@@ -44,7 +44,8 @@ struct EngPlatform
 {
     int width;
     int height;
-    GLFWwindow* window;
+    GLFWwindow* render_window;
+    GLFWwindow* controll_window;
 	cl_platform_id* parent_platform;
 	cl_device_id* devices;
 	cl_uint numDevices;
@@ -72,7 +73,8 @@ private:
     bool CLInit;
 	GLFWvidmode* vidmode;
 	GLFWmonitor* monitor;
-	GLFWwindow* window;
+    GLFWwindow* controll_window;
+    GLFWwindow* render_window;
     Log log;
     Log errlog;
 	cl_uint numPlatforms;

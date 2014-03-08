@@ -1,8 +1,8 @@
 EngInit:
-* Initialize engine with two context for renderer and for control (not started)
+* Initialize engine with two context: for renderer and for control (started by maxis11)
 * Check for memory leak / optimization to merge into master branch (not started)
 EngObject:
-* Vertex buffer objects (DONE maxis11)
+* Vertex buffer objects (DONE)
 * Uniform buffer objects (not started)
 * Buffers (bot started)
 * Samplers (not started)

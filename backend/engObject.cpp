@@ -2,8 +2,6 @@
 #include <iostream>
 void EngObject::init()
 {
-    glGenVertexArrays(1,&VAO);
-    glBindVertexArray(VAO);
     for (unsigned int i = 0; i < 7; i++)
         shader.created_stages[i] = 0;
     log.writeLog(std::string("init() OK"));
@@ -51,11 +49,7 @@ unsigned int EngObject::loadShaderVar(std::string name,GLenum type)
     tmpvar->name = new char [name.size()];
     memcpy (tmpvar->name,name.c_str(),name.size());
     if (type == GL_ARRAY_BUFFER)
-    {
-        current_locker->lock(platform->window);
         tmpvar->index = glGetAttribLocation(shader.program,tmpvar->name);
-        current_locker->unlock();
-    }
     vars.push_back(tmpvar);
     return vars.size() - 1;
 }
@@ -140,7 +134,7 @@ void EngObject::removeGPUData(unsigned int number)
 {
     if (datas[number]->created_gpu)
     {
-        current_locker->lock(platform->window);
+        current_locker->lock(platform->controll_window);
         glBindBuffer(datas[number]->type,datas[number]->gpu_data);
         glDisableVertexAttribArray(vars[datas[number]->num_var]->index);
         glDeleteBuffers(1,&datas[number]->gpu_data);
@@ -153,7 +147,6 @@ void EngObject::removeGPUData(unsigned int number)
 
 void EngObject::removeGPUShader()
 {
-    current_locker->lock(platform->window);
     if (shader.created_stages[0])
     {
         glDeleteShader(shader.vertex_shader);
@@ -189,8 +182,12 @@ void EngObject::removeGPUShader()
         glDeleteProgram(shader.program);
         shader.created_stages[6] = 0;
     }
-    current_locker->unlock();
     log.writeLog(std::string("removeGPUShader() OK"));
+}
+
+void EngObject::removeVAO()
+{
+    glDeleteVertexArrays(1,&VAO);
 }
 
 void EngObject::removeData(unsigned int num)
@@ -215,14 +212,12 @@ unsigned int EngObject::createGPUData(unsigned int num)
     removeGPUData(num);
     if (datas[num]->type == GL_ARRAY_BUFFER)
     {
-        current_locker->lock(platform->window);
         glGenBuffers(1,&datas[num]->gpu_data);
         glBindBuffer(datas[num]->type,datas[num]->gpu_data);
         glBufferData(datas[num]->type,datas[num]->cpu_data_size,datas[num]->cpu_data,datas[num]->usage);
         glVertexAttribPointer(vars[datas[num]->num_var]->index,datas[num]->size,datas[num]->format,datas[num]->normalized,0,NULL);
         glEnableVertexAttribArray(vars[datas[num]->num_var]->index);
         glBindBuffer(datas[num]->type,0);
-        current_locker->unlock();
         datas[num]->created_gpu = 1;
     }
     //TODO: Uniforms, Buffers, Samplers, Textures
@@ -233,7 +228,6 @@ unsigned int EngObject::createGPUData(unsigned int num)
 unsigned int EngObject::createGPUShader()
 {
     removeGPUShader();
-    current_locker->lock(platform->window);
     GLint resultsh = 0;
     if (shader.sources[0].size() > 0)
     {
@@ -398,9 +392,14 @@ unsigned int EngObject::createGPUShader()
     }
     else
         shader.created_stages[6] = 1;
-    current_locker->unlock();
     log.writeLog(std::string("createGPUShader() OK"));
     return 0;
+}
+
+void EngObject::createVAO()
+{
+    glGenVertexArrays(1,&VAO);
+    glBindVertexArray(VAO);
 }
 
 void EngObject::writeData(void *data, unsigned int cpu_size, unsigned int number, unsigned int var_num, GLenum type, GLenum usage, GLenum format, GLboolean normalized, GLint size, GLboolean to_gpu)

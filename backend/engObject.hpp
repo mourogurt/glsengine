@@ -56,10 +56,12 @@ public:
     void clearShader (unsigned int);
     void removeGPUData (unsigned int);
     void removeGPUShader ();
+    void removeVAO();
     void removeData (unsigned int);
     void removeShaderVar (unsigned int);
     unsigned int createGPUData (unsigned int);
     unsigned int createGPUShader ();
+    void createVAO();
     void writeData (void*,unsigned int,unsigned int, unsigned int,GLenum type = GL_ARRAY_BUFFER,GLenum usage = GL_STATIC_DRAW, GLenum format = GL_FLOAT, GLboolean normalized = GL_FALSE, GLint size = 4, GLboolean to_gpu = GL_TRUE);
     void writeShader (std::string,GLenum,GLboolean to_gpu = GL_TRUE);
     std::vector<std::string> getLog ();
