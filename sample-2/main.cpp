@@ -75,7 +75,7 @@ int main()
         glBindBuffer( GL_ARRAY_BUFFER, vbo );
         glVertexPointer( 2, GL_FLOAT, 0, 0 );
         glColor3ub( rand() % 256, rand() % 256, rand() % 256 );
-        glDrawArrays( GL_POINTS, 0, 256 );
+        glDrawArrays( GL_POINTS, 0, 512 );
         glBindBuffer( GL_ARRAY_BUFFER, 0 );
         glDisableClientState( GL_VERTEX_ARRAY );
         glfwSwapBuffers( window );

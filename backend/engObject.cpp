@@ -134,12 +134,10 @@ void EngObject::removeGPUData(unsigned int number)
 {
     if (datas[number]->created_gpu)
     {
-        current_locker->lock(platform->controll_window);
         glBindBuffer(datas[number]->type,datas[number]->gpu_data);
         glDisableVertexAttribArray(vars[datas[number]->num_var]->index);
         glDeleteBuffers(1,&datas[number]->gpu_data);
         glBindBuffer(datas[number]->type,0);
-        current_locker->unlock();
         datas[number]->created_gpu = 0;
     }
     log.writeLog(std::string("removeGPUData(unsigned int) OK"));
