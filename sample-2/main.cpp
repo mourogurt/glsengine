@@ -22,6 +22,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 }
 
 GLuint vbo;
+GLuint vao;
 
 // reload shared VBO with random data every second
 void MyThread( GLFWwindow* win )
@@ -50,6 +51,7 @@ void MyThread( GLFWwindow* win )
 
 int main()
 {
+
     if( !glfwInit() )
         return -1;
     glfwWindowHint( GLFW_VISIBLE, GL_FALSE );

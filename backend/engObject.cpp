@@ -61,7 +61,9 @@ void EngObject::render ()
     {
         if (datas[i]->type == GL_ARRAY_BUFFER)
         {
+            glEnableClientState( GL_VERTEX_ARRAY );
             glBindBuffer(datas[i]->type,datas[i]->gpu_data);
+            glVertexPointer( datas[i]->size, datas[i]->format, 0, 0 );
             glDrawArrays(GL_TRIANGLES,0,datas[i]->cpu_data_size / 3);
             glBindBuffer(datas[i]->type,0);
         }

@@ -54,6 +54,7 @@ int main()
     render.setRenderFunction(ENGFUNCPOSTLOOP,(void*)post_loop_func);
     object.loadShader(VertexShaderCode,GL_VERTEX_SHADER);
     object.loadShader(FragmentShaderCode,GL_FRAGMENT_SHADER);
+    //object.createVAO();
     object.createGPUShader();
     std::vector<std::string> errlog = object.getErrLog();
     for (unsigned int i = 0; i < errlog.size(); i++)
@@ -90,8 +91,8 @@ void pre_render_func(const EngPlatform *platform,const Buffer *indata, Buffer *o
     auto var_index = objin->loadShaderVar("vertexPosition_modelspace");
     auto index = objin->loadData((void*)g_vertex_buffer_data,sizeof(g_vertex_buffer_data),var_index);
     objin->createGPUData(index);*/
-    EngObject* objin = (EngObject*) indata->buff;
-    objin->createVAO();
+    //EngObject* objin = (EngObject*) indata->buff;
+    //objin->createVAO();
     glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
 }
 
@@ -104,8 +105,8 @@ void loop_func (const EngPlatform *platform,const Buffer *indata, Buffer *outdat
 
 void post_loop_func (const EngPlatform *platform,const Buffer *indata, Buffer *outdata, Buffer *from_pre, Buffer *from_loop)
 {
-    EngObject* objin = (EngObject*) indata->buff;
-    objin->removeVAO();
+    //EngObject* objin = (EngObject*) indata->buff;
+    //objin->removeVAO();
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
