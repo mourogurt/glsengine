@@ -457,11 +457,6 @@ std::vector<std::string> EngObject::getErrLog()
     return errlog.getLog();
 }
 
-void EngObject::setController(ContextMutex *controller)
-{
-    current_locker = controller;
-}
-
 void EngObject::setPlatform(EngPlatform *platformin)
 {
     platform = platformin;

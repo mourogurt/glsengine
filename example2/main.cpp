@@ -43,11 +43,7 @@ int main()
     initclgl.setCallback(KEYFUN,(void*)key_callback);
     initclgl.createContext(0);
     auto platform = initclgl.getEngPlatform(0);
-    auto locker = initclgl.getLocker();
-    render.setController(locker);
     render.setPlatform(platform);
-    object.setController(locker);
-    object.setPlatform(platform);
     object.init();
     render.setRenderFunction(ENGFUNCPRELOOP,(void*)pre_render_func);
     render.setRenderFunction(ENGFUNCLOOP,(void*)loop_func);
@@ -66,10 +62,7 @@ int main()
     buf.buff = (char*)&object;
     buf.buffsize = sizeof(EngObject);
     render.setInData(&buf);
-    glFlush();
     render.render();
-    while (!glfwWindowShouldClose(platform->render_window))
-        glfwWaitEvents();
     render.stopRender();
     object.clearAll();
     initclgl.destroy();
@@ -91,8 +84,8 @@ void pre_render_func(const EngPlatform *platform,const Buffer *indata, Buffer *o
     auto var_index = objin->loadShaderVar("vertexPosition_modelspace");
     auto index = objin->loadData((void*)g_vertex_buffer_data,sizeof(g_vertex_buffer_data),var_index);
     objin->createGPUData(index);*/
-    //EngObject* objin = (EngObject*) indata->buff;
-    //objin->createVAO();
+    EngObject* objin = (EngObject*) indata->buff;
+    objin->createVAO();
     glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
 }
 
@@ -105,8 +98,8 @@ void loop_func (const EngPlatform *platform,const Buffer *indata, Buffer *outdat
 
 void post_loop_func (const EngPlatform *platform,const Buffer *indata, Buffer *outdata, Buffer *from_pre, Buffer *from_loop)
 {
-    //EngObject* objin = (EngObject*) indata->buff;
-    //objin->removeVAO();
+    EngObject* objin = (EngObject*) indata->buff;
+    objin->removeVAO();
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)

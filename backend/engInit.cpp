@@ -1,6 +1,6 @@
 #include "engInit.hpp"
 
-void EngInit::setCallback(unsigned int num, void *func, void *data)
+void EngInit::setCallback(unsigned int num, void *func, void *data, unsigned int numwindow)
 {
     switch (num)
     {
@@ -8,40 +8,40 @@ void EngInit::setCallback(unsigned int num, void *func, void *data)
         glfwSetErrorCallback((GLFWerrorfun)func);
         break;
     case 2:
-        glfwSetWindowPosCallback(render_window,(GLFWwindowposfun)func);
+        glfwSetWindowPosCallback(glplatforms[numwindow].controll_window,(GLFWwindowposfun)func);
         break;
     case 3:
-        glfwSetWindowSizeCallback(render_window,(GLFWwindowsizefun)func);
+        glfwSetWindowSizeCallback(glplatforms[numwindow].controll_window,(GLFWwindowsizefun)func);
         break;
     case 4:
-        glfwSetWindowCloseCallback(render_window,(GLFWwindowclosefun)func);
+        glfwSetWindowCloseCallback(glplatforms[numwindow].controll_window,(GLFWwindowclosefun)func);
         break;
     case 5:
-        glfwSetWindowRefreshCallback(render_window,(GLFWwindowrefreshfun)func);
+        glfwSetWindowRefreshCallback(glplatforms[numwindow].controll_window,(GLFWwindowrefreshfun)func);
         break;
     case 6:
-        glfwSetWindowFocusCallback(render_window,(GLFWwindowfocusfun)func);
+        glfwSetWindowFocusCallback(glplatforms[numwindow].controll_window,(GLFWwindowfocusfun)func);
         break;
     case 7:
-        glfwSetWindowIconifyCallback(render_window,(GLFWwindowiconifyfun)func);
+        glfwSetWindowIconifyCallback(glplatforms[numwindow].controll_window,(GLFWwindowiconifyfun)func);
         break;
     case 8:
-        glfwSetMouseButtonCallback(render_window,(GLFWmousebuttonfun)func);
+        glfwSetMouseButtonCallback(glplatforms[numwindow].controll_window,(GLFWmousebuttonfun)func);
         break;
     case 9:
-        glfwSetCursorPosCallback(render_window,(GLFWcursorposfun)func);
+        glfwSetCursorPosCallback(glplatforms[numwindow].controll_window,(GLFWcursorposfun)func);
         break;
     case 10:
-        glfwSetCursorEnterCallback(render_window,(GLFWcursorenterfun)func);
+        glfwSetCursorEnterCallback(glplatforms[numwindow].controll_window,(GLFWcursorenterfun)func);
         break;
     case 11:
-        glfwSetScrollCallback(render_window,(GLFWscrollfun)func);
+        glfwSetScrollCallback(glplatforms[numwindow].controll_window,(GLFWscrollfun)func);
         break;
     case 12:
-        glfwSetKeyCallback(render_window,(GLFWkeyfun)func);
+        glfwSetKeyCallback(glplatforms[numwindow].controll_window,(GLFWkeyfun)func);
         break;
     case 13:
-        glfwSetCharCallback(render_window,(GLFWcharfun)func);
+        glfwSetCharCallback(glplatforms[numwindow].controll_window,(GLFWcharfun)func);
         break;
     case 14:
         glfwSetMonitorCallback((GLFWmonitorfun)func);
@@ -87,205 +87,217 @@ EngInit::EngInit()
 {
 	GLInit = false;
 	CLInit = false;
-	vidmode = nullptr;
-	monitor = nullptr;
-    render_window = nullptr;
 	numPlatforms = 0;
-	platforms.clear();
+    glplatforms.clear();
+    clplatforms.clear();
     contextfunc = nullptr;
-    current_locker.init(1,0);
     log.writeLog(std::string("EngInit() OK"));
 }
 
-int EngInit::init(const char* title, int width, int height)
+unsigned int EngInit::initCL()
 {
-	cl_int err;
-    err=errFunc(clGetPlatformIDs(0, NULL, &numPlatforms),"clGetPlatformIDs error: ");
-	if (err!=CL_SUCCESS) return err;
-	if (numPlatforms==0)
-	{
+    if (!CLInit)
+    {
+        cl_int err;
+        cl_uint numPlatforms;
+        err=errFunc(clGetPlatformIDs(0, NULL, &numPlatforms),"clGetPlatformIDs error: ");
+        if (err!=CL_SUCCESS) return err;
+        if (numPlatforms==0)
+        {
+            log.writeLog(std::string("Add errlog"));
+            errlog.writeLog(std::string("No platform found"));
+            return 0;
+        }
+        pltmp = new cl_platform_id[numPlatforms];
+        clGetPlatformIDs(numPlatforms, pltmp, NULL);
+        for (cl_uint i = 0; i<numPlatforms; i++)
+        {
+            EngCLPlatform tmp;
+            tmp.parent_platform = &pltmp[i];
+            tmp.context=0;
+            err=errFunc( clGetDeviceIDs(*(tmp.parent_platform ), CL_DEVICE_TYPE_ALL, 0, NULL, &(tmp.numDevices)),"clGetDeviceIDs error: ");
+            if (err!=CL_SUCCESS)
+            {
+                delete [] pltmp;
+                return 0;
+            }
+            tmp.devices = new cl_device_id[tmp.numDevices];
+            err = clGetDeviceIDs(*(tmp.parent_platform) , CL_DEVICE_TYPE_ALL, tmp.numDevices, tmp.devices, NULL);
+            errFunc(err,"clCreateContext error: ");
+            if (err!=CL_SUCCESS)
+            {
+                delete [] pltmp;
+                delete [] tmp.devices;
+                return 0;
+            }
+            #ifdef __linux__
+                cl_context_properties properties[] = {
+                    CL_GL_CONTEXT_KHR, (cl_context_properties) glXGetCurrentContext(),
+                    CL_GLX_DISPLAY_KHR, (cl_context_properties) glXGetCurrentDisplay(),
+                    CL_CONTEXT_PLATFORM, (cl_context_properties) *(tmp.parent_platform),
+                0};
+            #elif defined _WIN32
+                cl_context_properties properties[] = {
+                    CL_GL_CONTEXT_KHR, (cl_context_properties) wglGetCurrentContext(),
+                    CL_WGL_HDC_KHR, (cl_context_properties) wglGetCurrentDC(),
+                    CL_CONTEXT_PLATFORM, (cl_context_properties) *(tmp.parent_platform),
+                0};
+            #elif defined TARGET_OS_MAC
+                CGLContextObj glContext = CGLGetCurrentContext();
+                CGLShareGroupObj shareGroup = CGLGetShareGroup(glContext);
+                cl_context_properties properties[] = {
+                    CL_CONTEXT_PROPERTY_USE_CGL_SHAREGROUP_APPLE,
+                    (cl_context_properties)shareGroup,
+                0};
+            #else
+                log.writeLog(std::string("Add errlog"));
+                errlog.writeLog(std::string("Unsupported platform"));
+                return 0;
+            #endif
+            tmp.context = clCreateContext(properties,tmp.numDevices,tmp.devices,contextfunc,usr_data,&err);
+            errFunc(err,"clCreateContext error: ");
+            if (err!=CL_SUCCESS)
+            {
+                delete [] pltmp;
+                delete [] tmp.devices;
+                return 0;
+            }
+            clplatforms.push_back(tmp);
+        }
+        CLInit = true;
+        log.writeLog(std::string("initCL() OK"));
+        return clplatforms.size() - 1;
+    }
+    else
+    {
         log.writeLog(std::string("Add errlog"));
-        errlog.writeLog(std::string("No platform found"));
-		return err;
-	}
-	pltmp = new cl_platform_id[numPlatforms];
-	clGetPlatformIDs(numPlatforms, pltmp, NULL);
-	for (cl_uint i = 0; i<numPlatforms; i++)
-	{
-		EngPlatform tmp;
-		tmp.parent_platform = &pltmp[i];
-		tmp.context=0;
-        err=errFunc( clGetDeviceIDs(*(tmp.parent_platform ), CL_DEVICE_TYPE_ALL, 0, NULL, &(tmp.numDevices)),"clGetDeviceIDs error: ");
-		if (err!=CL_SUCCESS)
-		{
-			delete [] pltmp;
-			return err;
-		}
-		tmp.devices = new cl_device_id[tmp.numDevices];
-        err = clGetDeviceIDs(*(tmp.parent_platform) , CL_DEVICE_TYPE_ALL, tmp.numDevices, tmp.devices, NULL);
-        errFunc(err,"clCreateContext error: ");
-		if (err!=CL_SUCCESS)
-		{
-			delete [] pltmp;
-			delete [] tmp.devices;
-			return err;
-		}
-        platforms.push_back(tmp);
-	}
-    CLInit = true;
-	if (!glfwInit())
-	{
-        log.writeLog(std::string("Add errlog"));
-        errlog.writeLog(std::string("glfwInit error"));
-		return GLFW_INIT_ERROR;
-	}
+        errlog.writeLog(std::string("OpenCL already initialized"));
+        return 0;
+    }
+}
+
+unsigned int EngInit::createGLWindow(const char* title,unsigned int param1,unsigned int param2)
+{
+    if (!GLInit)
+        if (!glfwInit())
+        {
+            log.writeLog(std::string("Add errlog"));
+            errlog.writeLog(std::string("glfwInit error"));
+            return 0;
+        }
     if (hints.size() > 0)
         for (auto p=hints.begin(); p!=hints.end(); p+=2)
             glfwWindowHint(*p,*(p+1));
     else
         glfwDefaultWindowHints();
-	monitor = glfwGetPrimaryMonitor();
-	vidmode = (GLFWvidmode*)glfwGetVideoMode (monitor);
-    if (render_window != nullptr)
-	{
-        log.writeLog("Add errlog");
-        errlog.writeLog(std::string("GLFWwindow already created"));
-        return GLFW_CREATE_WINDOW_ERROR;
-	}
-	glewExperimental=true;
-    int ht,wt;
-    glfwWindowHint( GLFW_VISIBLE, GL_FALSE );
-    controll_window = glfwCreateWindow( 1, 1, "Thread window", NULL, NULL );
-    glfwWindowHint( GLFW_VISIBLE, GL_TRUE );
-	if ((height!= 0) && (width != 0))
+    EngGLPlatform gltmp;
+    int monitornum = 0;
+    if (param2 == 0)
+        monitornum = param1;
+    int mcount;
+    GLFWmonitor** monitors = glfwGetMonitors(&mcount);
+    if (monitornum >= mcount)
     {
-         render_window = glfwCreateWindow(width, height, title, NULL, controll_window);
-        wt = width;
-        ht = height;
-    }
-	else
-    {
-        render_window = glfwCreateWindow(vidmode->width, vidmode->height, title, monitor, controll_window);
-        wt = vidmode->width;
-        ht = vidmode->height;
-    }
-	for (auto p = platforms.begin(); p<platforms.end(); p++)
-    {
-        (*p).render_window = render_window;
-        (*p).controll_window = controll_window;
-        (*p).height = ht;
-        (*p).width = wt;
-    }
-    current_locker.lock(controll_window);
-    GLenum GlewInitResult = glewInit();
-	if (GLEW_OK!=GlewInitResult)
-	{
         log.writeLog(std::string("Add errlog"));
-        errlog.writeLog(std::string(((const char*)glewGetErrorString(GlewInitResult))));
-        glfwDestroyWindow(render_window);
-        glfwDestroyWindow(controll_window);
-		return GLEW_INIT_ERROR;
+        errlog.writeLog(std::string("Nonexistent monitor number"));
+        return 0;
     }
-    GLInit = true;
-    log.writeLog(std::string("Init(const char*,int,int) OK"));
-	return ENG_INIT_OK;
-}
-
-void EngInit::destroy()
-{
-	if (CLInit == true)
-	{
-		for (auto p = platforms.begin(); p<platforms.end(); p++)
-		{
-			if ((*p).context!=0)
-				clReleaseContext((*p).context);
-				delete [] (*p).devices;
-		}
-		delete [] pltmp;
-		CLInit = false;
-	}
-	if (GLInit == true)
-	{
-        if (render_window!=NULL)
+    gltmp.monitor = monitors[monitornum];
+    gltmp.vidmode = (GLFWvidmode*)glfwGetVideoMode (gltmp.monitor);
+    if ((param1!= 0) && (param2 != 0))
+    {
+        gltmp.controll_window = glfwCreateWindow(param1, param2, title, NULL, NULL);
+        gltmp.width = param1;
+        gltmp.height = param2;
+    }
+    else
+    {
+        gltmp.controll_window = glfwCreateWindow(gltmp.vidmode->width, gltmp.vidmode->height, title, gltmp.monitor, NULL);
+        gltmp.width = gltmp.vidmode->width;
+        gltmp.height = gltmp.vidmode->height;
+    }
+    glplatforms.push_back(gltmp);
+    if (!GLInit)
+    {
+        glfwMakeContextCurrent(gltmp.controll_window);
+        glewExperimental=true;
+        GLenum GlewInitResult = glewInit();
+        if (GLEW_OK!=GlewInitResult)
         {
-            current_locker.unlock();
-            glfwDestroyWindow(render_window);
+            log.writeLog(std::string("Add errlog"));
+            errlog.writeLog(std::string(((const char*)glewGetErrorString(GlewInitResult))));
+            glfwDestroyWindow(gltmp.controll_window);
+            return 0;
         }
-        if (controll_window!=NULL)
+        GLInit = true;
+    }
+    log.writeLog(std::string("createGLWindow(const char*,unsigned int,unsigned int,unsigned int) OK"));
+    return glplatforms.size() - 1;
+}
+
+EngGLPlatform* EngInit::getEngGLPlatform (unsigned int number)
+{
+    return &glplatforms[number];
+}
+
+EngCLPlatform* EngInit::getEngCLPlatform (unsigned int number)
+{
+    return &clplatforms[number];
+}
+
+void EngInit::clearCL()
+{
+    if (CLInit)
+    {
+        for (auto p = clplatforms.begin(); p<clplatforms.end(); p++)
         {
-            current_locker.unlock();
-            glfwDestroyWindow(controll_window);
+            if ((*p).context!=0)
+                clReleaseContext((*p).context);
+                delete [] (*p).devices;
         }
-		glfwTerminate();
-		GLInit = false;
-	}
+        delete [] pltmp;
+        CLInit = false;
+    }
 }
 
-cl_uint EngInit::getNumPlatforms()
+void EngInit::destroyGLWindow(unsigned int numwindow)
 {
-	return numPlatforms;
+    if (GLInit)
+    {
+        if (numwindow >= glplatforms.size())
+        {
+            log.writeLog(std::string("Add errlog"));
+            errlog.writeLog(std::string("Nonexistent window number"));
+            return;
+        }
+        if (glplatforms[numwindow].controll_window != NULL)
+        {
+            glfwDestroyWindow(glplatforms[numwindow].controll_window);
+            glplatforms.erase(glplatforms.begin() + numwindow);
+            if (glplatforms.size() == 0)
+            {
+                glfwTerminate();
+                GLInit = false;
+            }
+        }
+    }
 }
 
-cl_int EngInit::createContext(int num)
+void EngInit::clearALL()
 {
+    clearCL();
+    for (unsigned int i = 0; i < glplatforms.size(); i++)
+        destroyGLWindow(i);
+}
 
-    #ifdef __linux__
-		cl_context_properties properties[] = { 
-			CL_GL_CONTEXT_KHR, (cl_context_properties) glXGetCurrentContext(),
-			CL_GLX_DISPLAY_KHR, (cl_context_properties) glXGetCurrentDisplay(), 
-			CL_CONTEXT_PLATFORM, (cl_context_properties) *(platforms[num].parent_platform), 
-		0};
-	#elif defined _WIN32
-		cl_context_properties properties[] = {
-			CL_GL_CONTEXT_KHR, (cl_context_properties) wglGetCurrentContext(), 
-			CL_WGL_HDC_KHR, (cl_context_properties) wglGetCurrentDC(), 
-			CL_CONTEXT_PLATFORM, (cl_context_properties) *(platforms[num].parent_platform), 
-		0};
-	#elif defined TARGET_OS_MAC
-		CGLContextObj glContext = CGLGetCurrentContext();
-		CGLShareGroupObj shareGroup = CGLGetShareGroup(glContext);
-		cl_context_properties properties[] = {
-			CL_CONTEXT_PROPERTY_USE_CGL_SHAREGROUP_APPLE,
-			(cl_context_properties)shareGroup,
-		0};
-	#else
+void EngInit::setCurrentMonitor(unsigned int numwindow)
+{
+    if (numwindow >= glplatforms.size())
+    {
         log.writeLog(std::string("Add errlog"));
-        errlog.writeLog(std::string("Unsupported platform"));
-		return ENG_UNKNOW_PLATFORM;
-    #endif
-	cl_int err;
-    platforms[num].context = clCreateContext(properties,platforms[num].numDevices,platforms[num].devices,contextfunc,usr_data,&err);
-    errFunc(err,"clCreateContext error: ");
-	if (err!=CL_SUCCESS)
-	{
-		return err;
-	}
-    log.writeLog(std::string("CreateContext(int) OK"));
-	return 0;
-}
-
-EngPlatform* EngInit::getEngPlatform(int num)
-{
-	return &(platforms.at(num));
-}
-
-ContextMutex* EngInit::getLocker()
-{
-    return &current_locker;
-}
-
-int EngInit::destroyContext(int num)
-{
-	if (platforms.at(num).context != 0)
-	{
-		cl_int err;
-        err = clReleaseContext(platforms.at(num).context);
-		platforms.at(num).context = 0;
-		return err;
-	}
-	else
-	{
-        errFunc(ENG_CONTEXT_ERROR,"clReleaseContext error: ");
-		return ENG_CONTEXT_ERROR;
-	}
+        errlog.writeLog(std::string("Nonexistent window number"));
+        return;
+    }
+    glfwMakeContextCurrent(NULL);
+    glfwMakeContextCurrent(glplatforms[numwindow].controll_window);
 }

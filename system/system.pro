@@ -1,9 +1,7 @@
 TEMPLATE = lib
 CONFIG += staticlib
 HEADERS = concurent_queue.h \
-	  log.h \
-    contextmutex.hpp
+	  log.h
 SOURCES = concurent_queue.cpp \
-	  log.cpp \
-    contextmutex.cpp
+	  log.cpp
 QMAKE_CXXFLAGS += -std=c++11

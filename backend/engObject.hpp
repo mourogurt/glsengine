@@ -67,7 +67,6 @@ public:
     std::vector<std::string> getLog ();
     std::vector<std::string> getErrLog ();
     void setPlatform (EngPlatform*);
-    void setController (ContextMutex*);
     void clearAll ();
 private:
     std::vector<EngData*> datas;
@@ -75,7 +74,6 @@ private:
     EngShader shader;
     Log log;
     Log errlog;
-    ContextMutex* current_locker;
     EngPlatform *platform;
     GLuint VAO;
 };

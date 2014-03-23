@@ -2,7 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
-#include "engRender.hpp"
+#include "engInit.hpp"
 
 
 void error_callback(int error, const char* description)
@@ -15,21 +15,13 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         glfwSetWindowShouldClose(window, GL_TRUE);
 }
 
-void render_callback (const EngPlatform *platform,const Buffer *indata, Buffer *outdata, Buffer *from_pre, Buffer *to_post)
-{
-    GLfloat red[] = { 1.0f, 0.0f, 0.0f, 1.0f };
-    glClearBufferfv(GL_COLOR, 0, red);
-}
-
 int main( void )
 {
     EngInit initclgl;
-    EngRender render;
-    EngPlatform* platform;
     initclgl.setCallback(ERRFUN,(void*)error_callback);
-    initclgl.init("Simple app",800,640);
-    initclgl.setCallback(KEYFUN,(void*)key_callback);
-    platform = initclgl.getEngPlatform(0);
+    unsigned int win1 = initclgl.createGLWindow("Example 1",800,640);
+    initclgl.setCallback(KEYFUN,(void*)key_callback,NULL,win1);
+    auto platform = initclgl.getEngGLPlatform(win1);
     std::vector<std::string> log = initclgl.getErrLog();
     std::cout<<"Errors: "<<std::endl;
     for (size_t i = 0; i < log.size(); i++ )
@@ -38,14 +30,13 @@ int main( void )
     std::cout<<"Debug information:\n";
     for (size_t i = 0; i < log.size(); i++ )
         std::cout<<log[i]<<std::endl;
-    auto controller = initclgl.getLocker();
-    render.setPlatform(platform);
-    render.setController(controller);
-    render.setRenderFunction(ENGFUNCLOOP,(void*)render_callback);
-    render.render();
+    glClearColor(0.4,0.4,1.0,0.0);
     while (!glfwWindowShouldClose(platform->controll_window))
-            glfwWaitEvents();
-    render.stopRender();
-    initclgl.destroy();
+    {
+        glClear(GL_COLOR_BUFFER_BIT);
+        glfwSwapBuffers(platform->controll_window);
+        glfwPollEvents();
+    }
+    initclgl.clearALL();
     return 0;
 }

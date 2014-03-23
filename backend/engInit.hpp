@@ -1,8 +1,6 @@
 #ifndef ENGINIT_HPP
 #define ENGINIT_HPP
 #include <GL/glew.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
 #include <GL/glx.h>
 #include <GLFW/glfw3.h>
 #include <CL/cl.h>
@@ -13,7 +11,6 @@
 #include <thread>
 #include <mutex>
 #include "../system/log.h"
-#include "../system/contextmutex.hpp"
 
 #define ENG_INIT_OK 0
 #define GLFW_INIT_ERROR 1
@@ -40,49 +37,52 @@
 
 typedef void (*ENG_CL_CALLBACK)(const char *, const void *, size_t, void *);
 
-struct EngPlatform
+struct EngCLPlatform
 {
-    int width;
-    int height;
-    GLFWwindow* render_window;
-    GLFWwindow* controll_window;
+
 	cl_platform_id* parent_platform;
 	cl_device_id* devices;
 	cl_uint numDevices;
 	cl_context context;
 };
 
+struct EngGLPlatform
+{
+    int width;
+    int height;
+    GLFWwindow* controll_window;
+    GLFWvidmode* vidmode;
+    GLFWmonitor* monitor;
+};
+
 class EngInit
 {
 public:
 	EngInit();
-    int init (const char* title, int width = 0, int height = 0);
-    cl_uint getNumPlatforms ();
-    cl_int createContext (int);
-    EngPlatform* getEngPlatform (int);
-    ContextMutex* getLocker ();
-    int destroyContext (int);
-    void setCallback(unsigned int num, void *func, void *data = nullptr);
+    unsigned int createGLWindow (const char* title, unsigned int param1 = 0, unsigned int param2 = 0);
+    unsigned int initCL();
+    EngGLPlatform* getEngGLPlatform (unsigned int);
+    EngCLPlatform* getEngCLPlatform (unsigned int);
+    void setCurrentMonitor (unsigned int);
+    void setCallback(unsigned int num, void *func, void *data = nullptr, unsigned int numwindow = 0);
     std::vector<std::string> getLog();
     std::vector<std::string> getErrLog();
     void setHint (std::initializer_list<int>);
-    void destroy();
+    void clearCL ();
+    void destroyGLWindow (unsigned int);
+    void clearALL();
 private:
     int errFunc (int,const char*);
     bool GLInit;
     bool CLInit;
-	GLFWvidmode* vidmode;
-	GLFWmonitor* monitor;
-    GLFWwindow* controll_window;
-    GLFWwindow* render_window;
     Log log;
     Log errlog;
 	cl_uint numPlatforms;
-	std::vector<EngPlatform> platforms;
+    std::vector<EngGLPlatform> glplatforms;
+    std::vector<EngCLPlatform> clplatforms;
     cl_platform_id* pltmp;
     ENG_CL_CALLBACK contextfunc;
 	void* usr_data;
     std::initializer_list<int> hints;
-    ContextMutex current_locker;
 };
 #endif

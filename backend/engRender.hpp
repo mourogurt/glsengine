@@ -5,9 +5,11 @@
 #include "engInit.hpp"
 #include "../system/log.h"
 
-typedef void (*ENG_RENDER_FUNCTION_PRE_LOOP) (const EngPlatform *,const Buffer *, Buffer *, Buffer *, Buffer *);
-typedef void (*ENG_RENDER_FUNCTION_LOOP)(const EngPlatform *,const Buffer *,Buffer *, Buffer *, Buffer *);
-typedef void (*ENG_RENDER_FUNCTION_POST_LOOP) (const EngPlatform *,const Buffer *,Buffer *,Buffer *, Buffer *);
+struct EngRenderData;
+
+typedef void (*ENG_RENDER_FUNCTION_PRE_LOOP) (const EngRenderData *,const Buffer *, Buffer *, Buffer *, Buffer *);
+typedef void (*ENG_RENDER_FUNCTION_LOOP)(const EngRenderData *,const Buffer *,Buffer *, Buffer *, Buffer *);
+typedef void (*ENG_RENDER_FUNCTION_POST_LOOP) (const EngRenderData *,const Buffer *,Buffer *,Buffer *, Buffer *);
 
 #define ENGFUNCPRELOOP 1
 #define ENGFUNCLOOP 2
@@ -23,7 +25,6 @@ struct EngRenderData
     ENG_RENDER_FUNCTION_POST_LOOP func_post;
     Buffer* indata;
     ConcurentQueue outdata;
-    ContextMutex* current_controller;
 };
 
 class EngRender
@@ -32,7 +33,6 @@ public:
     EngRender();
     void render();
     void setPlatform (EngPlatform*);
-    void setController (ContextMutex*);
     void setRenderFunction(unsigned int,void*);
     void setInData (Buffer*);
     void stopRender();
