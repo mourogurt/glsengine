@@ -60,10 +60,12 @@ class EngInit
 public:
 	EngInit();
     unsigned int createGLWindow (const char* title, unsigned int param1 = 0, unsigned int param2 = 0);
+    unsigned int createSharedGLWindow (const char* title, unsigned int, unsigned int param1 = 0, unsigned int param2 = 0);
     unsigned int initCL();
     EngGLPlatform* getEngGLPlatform (unsigned int);
     EngCLPlatform* getEngCLPlatform (unsigned int);
     void setCurrentMonitor (unsigned int);
+    void cleanThreadFromMonitors ();
     void setCallback(unsigned int num, void *func, void *data = nullptr, unsigned int numwindow = 0);
     std::vector<std::string> getLog();
     std::vector<std::string> getErrLog();

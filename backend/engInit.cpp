@@ -235,6 +235,50 @@ unsigned int EngInit::createGLWindow(const char* title,unsigned int param1,unsig
     return glplatforms.size() - 1;
 }
 
+unsigned int EngInit::createSharedGLWindow(const char* title, unsigned int numshare,unsigned int param1,unsigned int param2)
+{
+    if (numshare > glplatforms.size())
+    {
+        log.writeLog(std::string("Add errlog"));
+        errlog.writeLog(std::string("Nonexistent window number"));
+        return 0;
+    }
+    if (hints.size() > 0)
+        for (auto p=hints.begin(); p!=hints.end(); p+=2)
+            glfwWindowHint(*p,*(p+1));
+    else
+        glfwDefaultWindowHints();
+    EngGLPlatform gltmp;
+    int monitornum = 0;
+    if (param2 == 0)
+        monitornum = param1;
+    int mcount;
+    GLFWmonitor** monitors = glfwGetMonitors(&mcount);
+    if (monitornum >= mcount)
+    {
+        log.writeLog(std::string("Add errlog"));
+        errlog.writeLog(std::string("Nonexistent monitor number"));
+        return 0;
+    }
+    gltmp.monitor = monitors[monitornum];
+    gltmp.vidmode = (GLFWvidmode*)glfwGetVideoMode (gltmp.monitor);
+    if ((param1!= 0) && (param2 != 0))
+    {
+        gltmp.controll_window = glfwCreateWindow(param1, param2, title, NULL, glplatforms[numshare].controll_window);
+        gltmp.width = param1;
+        gltmp.height = param2;
+    }
+    else
+    {
+        gltmp.controll_window = glfwCreateWindow(gltmp.vidmode->width, gltmp.vidmode->height, title, gltmp.monitor, glplatforms[numshare].controll_window);
+        gltmp.width = gltmp.vidmode->width;
+        gltmp.height = gltmp.vidmode->height;
+    }
+    glplatforms.push_back(gltmp);
+    log.writeLog(std::string("createSharedGLWindow(const char*,unsigned int,unsigned int,unsigned int,unsigned int) OK"));
+    return glplatforms.size() - 1;
+}
+
 EngGLPlatform* EngInit::getEngGLPlatform (unsigned int number)
 {
     return &glplatforms[number];
@@ -286,8 +330,12 @@ void EngInit::destroyGLWindow(unsigned int numwindow)
 void EngInit::clearALL()
 {
     clearCL();
-    for (unsigned int i = 0; i < glplatforms.size(); i++)
+    unsigned int i = glplatforms.size() - 1;
+    while (glplatforms.size() > 0)
+    {
         destroyGLWindow(i);
+        i--;
+    }
 }
 
 void EngInit::setCurrentMonitor(unsigned int numwindow)
@@ -300,4 +348,9 @@ void EngInit::setCurrentMonitor(unsigned int numwindow)
     }
     glfwMakeContextCurrent(NULL);
     glfwMakeContextCurrent(glplatforms[numwindow].controll_window);
+}
+
+void EngInit::cleanThreadFromMonitors()
+{
+    glfwMakeContextCurrent(NULL);
 }
