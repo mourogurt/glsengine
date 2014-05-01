@@ -28,7 +28,6 @@ GLuint vao;
 void MyThread( GLFWwindow* win )
 {
     glfwMakeContextCurrent( win );
-    //glewInit();
 
     glGenBuffers( 1, &vbo );
     srand(time(NULL));

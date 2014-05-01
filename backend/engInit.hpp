@@ -3,21 +3,12 @@
 #include <GL/glew.h>
 #include <GL/glx.h>
 #include <GLFW/glfw3.h>
+#include "../system/log.h"
+#ifdef ENG_USE_CL
 #include <CL/cl.h>
 #include <CL/cl_gl.h>
-#include <cstdlib>
-#include <vector>
 #include <sstream>
-#include <thread>
-#include <mutex>
-#include "../system/log.h"
-
-#define ENG_INIT_OK 0
-#define GLFW_INIT_ERROR 1
-#define GLEW_INIT_ERROR 2
-#define GLFW_CREATE_WINDOW_ERROR 3
-#define ENG_UNKNOW_PLATFORM 4
-#define ENG_CONTEXT_ERROR 5
+#endif
 
 #define ERRFUN 1
 #define WINPOSFUN 2
@@ -35,6 +26,7 @@
 #define MONITORFUN 14
 #define CLCONTEXTFUN 15
 
+#ifdef ENG_USE_CL
 typedef void (*ENG_CL_CALLBACK)(const char *, const void *, size_t, void *);
 
 struct EngCLPlatform
@@ -45,6 +37,7 @@ struct EngCLPlatform
 	cl_uint numDevices;
 	cl_context context;
 };
+#endif
 
 struct EngGLPlatform
 {
@@ -61,30 +54,35 @@ public:
 	EngInit();
     unsigned int createGLWindow (const char* title, unsigned int param1 = 0, unsigned int param2 = 0);
     unsigned int createSharedGLWindow (const char* title, unsigned int, unsigned int param1 = 0, unsigned int param2 = 0);
-    unsigned int initCL();
     EngGLPlatform* getEngGLPlatform (unsigned int);
-    EngCLPlatform* getEngCLPlatform (unsigned int);
     void setCurrentMonitor (unsigned int);
     void cleanThreadFromMonitors ();
     void setCallback(unsigned int num, void *func, void *data = nullptr, unsigned int numwindow = 0);
     std::vector<std::string> getLog();
     std::vector<std::string> getErrLog();
     void setHint (std::initializer_list<int>);
-    void clearCL ();
     void destroyGLWindow (unsigned int);
     void clearALL();
+    #ifdef ENG_USE_CL
+    unsigned int initCL();
+    void clearCL ();
+    EngCLPlatform* getEngCLPlatform (unsigned int);
+    #endif
 private:
-    int errFunc (int,const char*);
     bool GLInit;
-    bool CLInit;
     Log log;
     Log errlog;
-	cl_uint numPlatforms;
+    std::initializer_list<int> hints;
     std::vector<EngGLPlatform> glplatforms;
+    #ifdef ENG_USE_CL
+    int errFunc (int,const char*);
+    bool CLInit;
+    cl_uint numPlatforms;
     std::vector<EngCLPlatform> clplatforms;
     cl_platform_id* pltmp;
     ENG_CL_CALLBACK contextfunc;
 	void* usr_data;
-    std::initializer_list<int> hints;
+    #endif
+
 };
 #endif

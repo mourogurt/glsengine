@@ -16,3 +16,11 @@ HEADERS += \
 LIBS += -lbackend -lsystem
 QMAKE_CXXFLAGS += -std=c++11
 unix|win32: LIBS += -lGL -lGLEW -lglfw
+
+include(deployment.pri)
+qtcAddDeployment()
+
+OTHER_FILES += \
+    vshader.glsl \
+    fshader.glsl
+
