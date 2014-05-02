@@ -1,40 +1,41 @@
 #ifndef ENGDATA_HPP
 #define ENGDATA_HPP
 #include "engInit.hpp"
+#include <cstring>
 
-class EngData
+class EngAttribute
 {
 public:
-    EngData();
-    void setName (std::string);
+    EngAttribute();
+    void setName (char*);
     void setProgram (GLuint);
-    virtual void setLength (GLuint lengthi) {length = lengthi;}
-    virtual void setData(GLfloat* datai) { data = datai;}
-    virtual void clear() { length = 0; data = nullptr; }
-    virtual void bind()
-    {
-        location = glGetAttribLocation(program,name.c_str());
-    }
-    virtual void write()
-    {
-        if (length == 1)
-            glVertexAttrib1fv(location,data); else
-        if (length == 2)
-            glVertexAttrib1fv(location,data); else
-        if (length == 3)
-            glVertexAttrib1fv(location,data); else
-        if (length == 4)
-            glVertexAttrib1fv(location,data);
-    }
-    ~EngData();
+    void setLength (GLuint);
+    void setData(GLfloat*);
+    void clear();
+    void bind();
+    void write();
+    ~EngAttribute();
 protected:
     GLuint program;
-    std::string name;
-    GLuint location;
+    char* name;
+    GLint location;
 private:
     GLfloat* data;
     GLuint length;
     GLuint VAO;
 };
+
+/*class EngAttributeArray : protected EngAttribute
+{
+public:
+   //void bind();
+   //void write();
+   //void setLength(GLuint);
+   //void setData(GLfloat*);
+private:
+   GLfloat* data;
+   GLuint length;
+
+};*/
 
 #endif // ENGDATA_HPP

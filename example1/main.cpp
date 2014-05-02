@@ -52,10 +52,11 @@ int main( void )
     std::cout<<"Debug information:\n";
     for (size_t i = 0; i < log.size(); i++ )
         std::cout<<log[i]<<std::endl;
-    GLfloat data[4] = {0.0,0.0,0.5,1.0};
-    EngData objdata;
+    GLfloat data[4] = {1.0,0.0,0.5,1.0};
+    glPointSize(10.0);
+    EngAttribute objdata;
     objdata.setProgram(program);
-    objdata.setName("position");
+    objdata.setName("vcolor\0");
     objdata.setLength(4);
     objdata.setData(data);
     objdata.bind();

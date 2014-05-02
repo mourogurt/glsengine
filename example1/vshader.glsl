@@ -1,8 +1,10 @@
 #version 330 core
 
-in vec4 position;
+in vec4 vcolor;
+out vec4 fcolor;
 
 void main(void)
 {
-    gl_Position = position;
+    gl_Position = vec4(0.0, 0.0, 0.5, 1.0);
+    fcolor = vcolor;
 }
