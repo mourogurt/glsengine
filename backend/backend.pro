@@ -12,3 +12,6 @@ QMAKE_CXXFLAGS += -std=c++11
 OTHER_FILES += \
     ../docs/roadmap.txt
 
+CONFIG(debug, debug|release){
+    DEFINES += _DEBUG
+}

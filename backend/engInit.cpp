@@ -53,11 +53,15 @@ void EngInit::setCallback(unsigned int num, void *func, void *data, unsigned int
         break;
     #endif
     default:
+        #ifdef _DEBUG
         log.writeLog(std::string("Add errlog"));
+        #endif
         errlog.writeLog(std::string("Unsuported value"));
         return;
     }
+    #ifdef _DEBUG
     log.writeLog(std::string("setCallback(unsigned int,void*,void*,unsigned int) OK"));
+    #endif
 }
 
 std::vector<std::string> EngInit::getLog()
@@ -73,7 +77,9 @@ std::vector<std::string> EngInit::getErrLog()
 void EngInit::setHint(std::initializer_list<int> args)
 {
     hints = args;
+    #ifdef _DEBUG
     log.writeLog(std::string("setHint(std::initializer_list<int>) OK"));
+    #endif
 }
 
 EngInit::EngInit()
@@ -86,7 +92,9 @@ EngInit::EngInit()
     clplatforms.clear();
     contextfunc = nullptr;
     #endif
+    #ifdef _DEBUG
     log.writeLog(std::string("EngInit() OK"));
+    #endif
 }
 
 unsigned int EngInit::createGLWindow(const char* title,unsigned int param1,unsigned int param2)
@@ -94,7 +102,9 @@ unsigned int EngInit::createGLWindow(const char* title,unsigned int param1,unsig
     if (!GLInit)
         if (!glfwInit())
         {
+            #ifdef _DEBUG
             log.writeLog(std::string("Add errlog"));
+            #endif
             errlog.writeLog(std::string("glfwInit error"));
             return 0;
         }
@@ -111,7 +121,9 @@ unsigned int EngInit::createGLWindow(const char* title,unsigned int param1,unsig
     GLFWmonitor** monitors = glfwGetMonitors(&mcount);
     if (monitornum >= mcount)
     {
+        #ifdef _DEBUG
         log.writeLog(std::string("Add errlog"));
+        #endif
         errlog.writeLog(std::string("Nonexistent monitor number"));
         return 0;
     }
@@ -137,14 +149,18 @@ unsigned int EngInit::createGLWindow(const char* title,unsigned int param1,unsig
         GLenum GlewInitResult = glewInit();
         if (GLEW_OK!=GlewInitResult)
         {
+            #ifdef _DEBUG
             log.writeLog(std::string("Add errlog"));
+            #endif
             errlog.writeLog(std::string(((const char*)glewGetErrorString(GlewInitResult))));
             glfwDestroyWindow(gltmp.controll_window);
             return 0;
         }
         GLInit = true;
     }
+    #ifdef _DEBUG
     log.writeLog(std::string("createGLWindow(const char*,unsigned int,unsigned int,unsigned int) OK"));
+    #endif
     return glplatforms.size() - 1;
 }
 
@@ -152,7 +168,9 @@ unsigned int EngInit::createSharedGLWindow(const char* title, unsigned int numsh
 {
     if (numshare > glplatforms.size())
     {
+        #ifdef _DEBUG
         log.writeLog(std::string("Add errlog"));
+        #endif
         errlog.writeLog(std::string("Nonexistent window number"));
         return 0;
     }
@@ -169,7 +187,9 @@ unsigned int EngInit::createSharedGLWindow(const char* title, unsigned int numsh
     GLFWmonitor** monitors = glfwGetMonitors(&mcount);
     if (monitornum >= mcount)
     {
+        #ifdef _DEBUG
         log.writeLog(std::string("Add errlog"));
+        #endif
         errlog.writeLog(std::string("Nonexistent monitor number"));
         return 0;
     }
@@ -188,7 +208,9 @@ unsigned int EngInit::createSharedGLWindow(const char* title, unsigned int numsh
         gltmp.height = gltmp.vidmode->height;
     }
     glplatforms.push_back(gltmp);
+    #ifdef _DEBUG
     log.writeLog(std::string("createSharedGLWindow(const char*,unsigned int,unsigned int,unsigned int,unsigned int) OK"));
+    #endif
     return glplatforms.size() - 1;
 }
 
@@ -208,26 +230,34 @@ void EngInit::clearALL()
         destroyGLWindow(i);
         i--;
     }
+    #ifdef _DEBUG
     log.writeLog(std::string("clearALL() OK"));
+    #endif
 }
 
 void EngInit::setCurrentMonitor(unsigned int numwindow)
 {
     if (numwindow >= glplatforms.size())
     {
+        #ifdef _DEBUG
         log.writeLog(std::string("Add errlog"));
+        #endif
         errlog.writeLog(std::string("Nonexistent window number"));
         return;
     }
     glfwMakeContextCurrent(NULL);
     glfwMakeContextCurrent(glplatforms[numwindow].controll_window);
+    #ifdef _DEBUG
     log.writeLog(std::string("setCurrentMonitor(unsigned int) OK"));
+    #endif
 }
 
 void EngInit::cleanThreadFromMonitors()
 {
     glfwMakeContextCurrent(NULL);
+    #ifdef _DEBUG
     log.writeLog(std::string("cleanThreadFromMonitors() OK"));
+    #endif
 }
 
 void EngInit::destroyGLWindow(unsigned int numwindow)
@@ -236,7 +266,9 @@ void EngInit::destroyGLWindow(unsigned int numwindow)
     {
         if (numwindow >= glplatforms.size())
         {
+            #ifdef _DEBUG
             log.writeLog(std::string("Add errlog"));
+            #endif
             errlog.writeLog(std::string("Nonexistent window number"));
             return;
         }
@@ -251,7 +283,9 @@ void EngInit::destroyGLWindow(unsigned int numwindow)
             }
         }
     }
+    #ifdef _DEBUG
     log.writeLog(std::string("destroyGLWindow(unsigned int) OK"));
+    #endif
 }
 
 #ifdef ENG_USE_CL
@@ -273,7 +307,9 @@ void EngInit::clearCL()
         delete [] pltmp;
         CLInit = false;
     }
+    #ifdef _DEBUG
     log.writeLog(std::string("clearCL() OK"));
+    #endif
 }
 
 unsigned int EngInit::initCL()
@@ -286,7 +322,9 @@ unsigned int EngInit::initCL()
         if (err!=CL_SUCCESS) return err;
         if (numPlatforms==0)
         {
+            #ifdef _DEBUG
             log.writeLog(std::string("Add errlog"));
+            #endif
             errlog.writeLog(std::string("No platform found"));
             return 0;
         }
@@ -332,7 +370,9 @@ unsigned int EngInit::initCL()
                     (cl_context_properties)shareGroup,
                 0};
             #else
+                #ifdef _DEBUG
                 log.writeLog(std::string("Add errlog"));
+                #endif
                 errlog.writeLog(std::string("Unsupported platform"));
                 return 0;
             #endif
@@ -347,12 +387,16 @@ unsigned int EngInit::initCL()
             clplatforms.push_back(tmp);
         }
         CLInit = true;
+        #ifdef _DEBUG
         log.writeLog(std::string("initCL() OK"));
+        #endif
         return clplatforms.size() - 1;
     }
     else
     {
+        #ifdef _DEBUG
         log.writeLog(std::string("Add errlog"));
+        #endif
         errlog.writeLog(std::string("OpenCL already initialized"));
         return 0;
     }
@@ -364,7 +408,9 @@ int EngInit::errFunc(int err,const char* str)
     {
         std::stringstream tmp;
         tmp<<str<<err;
+        #ifdef _DEBUG
         log.writeLog(std::string("Add errlog"));
+        #endif
         errlog.writeLog(tmp.str());
     }
     return err;

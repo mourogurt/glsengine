@@ -3,39 +3,38 @@
 #include "engInit.hpp"
 #include <cstring>
 
-class EngAttribute
+class EngGLData
 {
 public:
-    EngAttribute();
-    void setName (char*);
+    EngGLData();
+    void setName (const char*);
     void setProgram (GLuint);
     void setLength (GLuint);
-    void setData(GLfloat*);
-    void clear();
-    void bind();
-    void write();
-    ~EngAttribute();
+    virtual void clear() = 0;
+    virtual void bind() = 0;
+    virtual void write(const GLfloat*) = 0;
+    std::vector<std::string> getLog();
+    std::vector<std::string> getErrLog();
+    ~EngGLData();
 protected:
-    GLuint program;
     char* name;
-    GLint location;
-private:
-    GLfloat* data;
+    GLuint program;
     GLuint length;
+    Log log;
+    Log errlog;
+private:
     GLuint VAO;
+
 };
 
-/*class EngAttributeArray : protected EngAttribute
+class EngAttribute: public EngGLData
 {
 public:
-   //void bind();
-   //void write();
-   //void setLength(GLuint);
-   //void setData(GLfloat*);
+    void clear();
+    void bind();
+    void write(const GLfloat*);
 private:
-   GLfloat* data;
-   GLuint length;
-
-};*/
+    GLint location;
+};
 
 #endif // ENGDATA_HPP

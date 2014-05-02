@@ -58,14 +58,13 @@ int main( void )
     objdata.setProgram(program);
     objdata.setName("vcolor\0");
     objdata.setLength(4);
-    objdata.setData(data);
     objdata.bind();
     glClearColor(0.4,0.4,1.0,0.0);
+    glUseProgram(program);
+    objdata.write(data);
     while (!glfwWindowShouldClose(platform->controll_window))
     {
         glClear(GL_COLOR_BUFFER_BIT);
-        glUseProgram(program);
-        objdata.write();
         glDrawArrays(GL_POINTS, 0, 1);
         glfwSwapBuffers(platform->controll_window);
         glfwPollEvents();

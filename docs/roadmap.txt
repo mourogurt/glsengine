@@ -1,23 +1,26 @@
 EngInit:
 * Initialize engine with two context: for renderer and for control (not started)
-* Check for memory leak / optimization to merge into master branch (started maxis11)
+* Check for memory leak / optimization to merge into master branch (not started)
 EngObject:
 * Vertex Attribute objects (beta ready/need tests)
-* Vertex buffer objects (not started)
+* Vertex buffer objects (started maxis11)
 * Uniform objects (not started)
 * Uniform buffer objects (not started)
-* Buffers (bot started)
+* Buffers (not started)
 * Samplers (not started)
 * Textures (not started)
 * OpenCL buffers (not started)
 * OpenCL textures (not started)
 * OpenCL kernels (not started)
-* Check for memory leak / optimization to merge into master branch (started maxis11)
+* Check for memory leak / optimization to merge into master branch (not started)
+* Operators (not started)
 EngRender:
 * Use second context to draw (not started)
 * Check for memory leak / optimization to merge into master branch (not started)
 EngCustomShader : (beta ready/need tests)
-EngGeneratedShader : not started
-EngScene : not started
+EngGeneratedShader : (not started)
+EngScene : (not started)
 Documentation:
 * API documentation (not started)
+Log:
+* Enable/Disable log in Debug/Release build (started maxis11)
