@@ -1,6 +1,8 @@
 EngInit:
 * Initialize engine with two context: for renderer and for control (not started)
 * Check for memory leak / optimization to merge into master branch (not started)
+* Add settings how to create context (not started)
+* Add checking GL version (not started)
 EngObject:
 * Vertex Attribute objects (beta ready/need tests)
 * Vertex buffer objects (started maxis11)

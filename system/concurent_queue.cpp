@@ -2,8 +2,8 @@
 
 ConcurentQueue::ConcurentQueue()
 {
-	first = nullptr;
-	back = nullptr;
+    first = NULL;
+    back = NULL;
 	queue_size = 0;
 	max_size = 50;
 	critical_queue = 0;
@@ -11,8 +11,8 @@ ConcurentQueue::ConcurentQueue()
 
 ConcurentQueue::ConcurentQueue(bool crit)
 {
-	first = nullptr;
-	back = nullptr;
+    first = NULL;
+    back = NULL;
 	queue_size = 0;
 	max_size = 50;
 	critical_queue = crit;
@@ -40,18 +40,21 @@ void ConcurentQueue::push(Buffer* bufin)
 	if (first==NULL)
 	{
 		first = new Spisok;
+        first->next = NULL;
 		first->buf = bufin;
 		back = first;
 	} else if (first == back)
 	{
 		Spisok* sp = new Spisok;
 		sp->buf = bufin;
+        sp->next = NULL;
 		back = sp;
 		first -> next = back;
 	} else
 	{
 		Spisok* sp = new Spisok;
 		sp->buf = bufin;
+        sp->next = NULL;
 		back->next = sp;
 		back = sp;
 	}
@@ -115,7 +118,7 @@ void ConcurentQueue::set_priority(bool prior)
 
 void ConcurentQueue::clean()
 {
-	while (first != nullptr)
+    while (first != NULL)
 	{
 		Buffer* retbuf = pop();
 		if (retbuf != NULL)

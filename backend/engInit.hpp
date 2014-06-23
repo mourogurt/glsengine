@@ -1,7 +1,6 @@
 #ifndef ENGINIT_HPP
 #define ENGINIT_HPP
 #include <GL/glew.h>
-#include <GL/glx.h>
 #include <GLFW/glfw3.h>
 #include "../system/log.h"
 #ifdef ENG_USE_CL
@@ -9,6 +8,9 @@
 #include <CL/cl_gl.h>
 #include <sstream>
 #endif
+
+#define MIN_GL_MAJOR_VERSION 3
+#define MIN_GL_MINOR_VERSION 2
 
 #define ERRFUN 1
 #define WINPOSFUN 2

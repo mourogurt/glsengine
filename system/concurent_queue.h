@@ -34,7 +34,7 @@ private:
 	bool critical_queue;
 	Spisok* first;
 	Spisok* back;
-	std::mutex lock_mutex;
+    std::mutex lock_mutex;
 	std::condition_variable wait_cond;
 };
 

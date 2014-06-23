@@ -3,24 +3,22 @@ CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
 
-INCLUDEPATH = ../backend \
-              ../system
-unix: LIBPATH = ../backend \
-          ../system
+INCLUDEPATH = ../../backend \
+              ../../system
+unix: LIBPATH = ../../backend \
+          ../../system
 win32 {
     CONFIG(debug, debug|release){
-        LIBPATH = ../backend/debug \
-                  ../system/debug
+        LIBPATH = ../../backend/debug \
+                  ../../system/debug
     }
     CONFIG(release, debug|release){
-        LIBPATH = ../backend/release \
-                  ../system/release
+        LIBPATH = ../../backend/release \
+                  ../../system/release
     }
 }
-SOURCES += main.cpp
 
-HEADERS += \
-    backend/engInit.hpp
+SOURCES += main.cpp
 
 LIBS += -lbackend -lsystem
 QMAKE_CXXFLAGS += -std=c++11
@@ -31,3 +29,7 @@ unix {
     PKGCONFIG += glew
     PKGCONFIG += glfw3
 }
+
+include(deployment.pri)
+qtcAddDeployment()
+

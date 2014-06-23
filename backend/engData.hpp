@@ -2,20 +2,21 @@
 #define ENGDATA_HPP
 #include "engInit.hpp"
 #include <cstring>
+#include <typeinfo>
 
-class EngGLData
+class EngGLvalue
 {
 public:
-    EngGLData();
+    EngGLvalue();
     void setName (const char*);
     void setProgram (GLuint);
     void setLength (GLuint);
     virtual void clear() = 0;
     virtual void bind() = 0;
-    virtual void write(const GLfloat*) = 0;
+    virtual void unbind() = 0;
     std::vector<std::string> getLog();
     std::vector<std::string> getErrLog();
-    ~EngGLData();
+    ~EngGLvalue();
 protected:
     char* name;
     GLuint program;
@@ -27,12 +28,22 @@ private:
 
 };
 
-class EngAttribute: public EngGLData
+class EngGLbuffer
+{
+public:
+    EngGLbuffer();
+    ~EngGLbuffer();
+};
+
+class EngAttribute final: public EngGLvalue
 {
 public:
     void clear();
     void bind();
-    void write(const GLfloat*);
+    void unbind();
+    bool write(const GLfloat*);
+    bool write(const GLshort*);
+    bool write(const GLdouble*);
 private:
     GLint location;
 };

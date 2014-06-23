@@ -108,11 +108,12 @@ unsigned int EngInit::createGLWindow(const char* title,unsigned int param1,unsig
             errlog.writeLog(std::string("glfwInit error"));
             return 0;
         }
-    if (hints.size() > 0)
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, MIN_GL_MAJOR_VERSION);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, MIN_GL_MINOR_VERSION);
         for (auto p=hints.begin(); p!=hints.end(); p+=2)
             glfwWindowHint(*p,*(p+1));
-    else
-        glfwDefaultWindowHints();
     EngGLPlatform gltmp;
     int monitornum = 0;
     if (param2 == 0)
