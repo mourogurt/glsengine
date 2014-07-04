@@ -1,8 +1,9 @@
 #include <iostream>
+#include <fstream>
+#include <cmath>
 #include <engInit.hpp>
 #include <engCustomShader.hpp>
 #include <engData.hpp>
-#include <fstream>
 
 using namespace std;
 
@@ -25,24 +26,48 @@ int main()
     shader.compileShaderStage(GL_FRAGMENT_SHADER,sources);
     shader.linkShader();
     GLuint program = shader.getProgramID();
-    const float indata[4] = {1.0,0.0,0.5,1.0};
-    EngAttribute data;
-    data.setProgram(program);
-    data.setName("vcolor\0");
-    data.setLength(4);
-    data.bind();
+    auto log = shader.getErrLog();
+    for (unsigned i = 0; i < log.size(); i++)
+        cout << log[i]<<endl;
+    if (log.size() > 0) return 1;
+    float color[4];
+    float pos[4];
+    EngGLAttribute value1,value2;
+    value1.setProgram(program);
+    value1.setName("vcolor\0");
+    value1.setLength(4);
+    value1.bind();
+    value2.setProgram(program);
+    value2.setName("position\0");
+    value2.setLength(4);
+    value2.bind();
     glUseProgram(program);
-    data.write(indata);
     glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
     glPointSize(5.0);
+    float eps = 0.0;
     do {
+        eps+=0.01;
+        if (eps >= 100)
+            eps = 0;
+        pos[0] = cos(eps)*0.95;
+        pos[1] = sin(eps)*0.95;
+        pos[2] = 0.0f;
+        pos[3] = 1.0f;
+        color[0] = cos(eps);
+        color[1] = sin(eps);
+        color[2] = cos(eps)*cos(eps) + sin(eps)*sin(eps);
+        color[3] = 1.0f;
+        value2.write(pos);
+        value1.write(color);
         glClear(GL_COLOR_BUFFER_BIT);
         glDrawArrays(GL_POINTS, 0, 1);
         glfwSwapBuffers(platform->controll_window);
         glfwPollEvents();
     } while (glfwGetKey(platform->controll_window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
              glfwWindowShouldClose(platform->controll_window) == 0);
-    data.clear();
+    int* ptr = NULL;
+    delete ptr;
+    delete ptr;
     shader.cleanShader();
     initgl.clearALL();
     return 0;

@@ -21,10 +21,9 @@ void EngGLvalue::setLength(GLuint lengthi)
 
 void EngGLvalue::setName(const char* namei)
 {
-    if (name != NULL)
-        delete [] name;
-    name = new char[strlen(namei)+1];
-    strcpy(name,namei);
+    name.reset(nullptr);
+    name = std::unique_ptr<char[]>(new char[strlen(namei)+1]);
+    strcpy(name.get(),namei);
     #ifdef _DEBUG
     log.writeLog("setName(char*) OK");
     #endif
@@ -48,16 +47,22 @@ std::vector<std::string> EngGLvalue::getErrLog()
     return errlog.getLog();
 }
 
-EngGLvalue::~EngGLvalue()
+void EngGLvalue::clear()
 {
-    glDeleteVertexArrays(1,&VAO);
-    if (name!=NULL)
-        delete [] name;
+    name.reset(nullptr);
+    #ifdef _DEBUG
+    log.writeLog("clear() OK");
+    #endif
 }
 
-void EngAttribute::bind()
+EngGLvalue::~EngGLvalue()
 {
-    location = glGetAttribLocation(program,name);
+    clear();
+}
+
+void EngGLAttribute::bind()
+{
+    location = glGetAttribLocation(program,name.get());
     if (location == -1)
     {
         #ifdef _DEBUG
@@ -71,18 +76,17 @@ void EngAttribute::bind()
     #endif
 }
 
-void EngAttribute::unbind()
+void EngGLAttribute::unbind()
 {
     location = -1;
-    if (name != NULL)
-        delete [] name;
+    name.reset(nullptr);
     #ifdef _DEBUG
     log.writeLog("unbind() OK");
     #endif
 }
 
 
-bool EngAttribute::write(const GLfloat* data)
+bool EngGLAttribute::write(const GLfloat* data)
 {
     if (location == -1)
     {
@@ -107,13 +111,10 @@ bool EngAttribute::write(const GLfloat* data)
         errlog.writeLog("Wrong length parameter");
         return 1;
     }
-    #ifdef _DEBUG
-    log.writeLog("write(GLfloat*) OK");
-    #endif
     return 0;
 }
 
-bool EngAttribute::write(const GLdouble* data)
+bool EngGLAttribute::write(const GLdouble* data)
 {
     if (location == -1)
     {
@@ -138,13 +139,10 @@ bool EngAttribute::write(const GLdouble* data)
         errlog.writeLog("Wrong length parameter");
         return 1;
     }
-    #ifdef _DEBUG
-    log.writeLog("write(GLfloat*) OK");
-    #endif
     return 0;
 }
 
-bool EngAttribute::write(const GLshort* data)
+bool EngGLAttribute::write(const GLshort* data)
 {
     if (location == -1)
     {
@@ -169,18 +167,11 @@ bool EngAttribute::write(const GLshort* data)
         errlog.writeLog("Wrong length parameter");
         return 1;
     }
-    #ifdef _DEBUG
-    log.writeLog("write(GLfloat*) OK");
-    #endif
     return 0;
 }
 
-void EngAttribute::clear()
+EngGLbuffer::EngGLbuffer()
 {
-    length = 0;
-    if (name != NULL)
-        delete [] name;
-    #ifdef _DEBUG
-    log.writeLog("clear() OK");
-    #endif
+    glGenVertexArrays(1,&VAO);
+    glGenBuffers(1,&VBO);
 }

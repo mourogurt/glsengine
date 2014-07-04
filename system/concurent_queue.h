@@ -3,17 +3,18 @@
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+#include <cstring>
 
 struct Buffer
 {
-   char* buff;
-   unsigned int buffsize;
+   std::unique_ptr<char[]> data;
+   unsigned int datasize;
 };
 
-struct Spisok
+struct List
 {
-	Buffer* buf;
-	Spisok* next;
+    std::unique_ptr<Buffer> buffer;
+    List* next;
 };
 
 class ConcurentQueue
@@ -32,8 +33,8 @@ private:
 	size_t queue_size;
 	size_t max_size;
 	bool critical_queue;
-	Spisok* first;
-	Spisok* back;
+    List* first;
+    List* back;
     std::mutex lock_mutex;
 	std::condition_variable wait_cond;
 };

@@ -59,7 +59,11 @@ public:
     EngGLPlatform* getEngGLPlatform (unsigned int);
     void setCurrentMonitor (unsigned int);
     void cleanThreadFromMonitors ();
+    #ifdef ENG_USE_CL
     void setCallback(unsigned int num, void *func, void *data = nullptr, unsigned int numwindow = 0);
+    #else
+    void setCallback(unsigned int num, void *func, unsigned int numwindow = 0);
+    #endif
     std::vector<std::string> getLog();
     std::vector<std::string> getErrLog();
     void setHint (std::initializer_list<int>);
@@ -70,6 +74,7 @@ public:
     void clearCL ();
     EngCLPlatform* getEngCLPlatform (unsigned int);
     #endif
+    ~EngInit();
 private:
     bool GLInit;
     Log log;

@@ -11,14 +11,14 @@ public:
     void setName (const char*);
     void setProgram (GLuint);
     void setLength (GLuint);
-    virtual void clear() = 0;
+    virtual void clear();
     virtual void bind() = 0;
     virtual void unbind() = 0;
     std::vector<std::string> getLog();
     std::vector<std::string> getErrLog();
     ~EngGLvalue();
 protected:
-    char* name;
+    std::unique_ptr<char[]> name;
     GLuint program;
     GLuint length;
     Log log;
@@ -32,13 +32,14 @@ class EngGLbuffer
 {
 public:
     EngGLbuffer();
-    ~EngGLbuffer();
+private:
+    GLuint VAO;
+    GLuint VBO;
 };
 
-class EngAttribute final: public EngGLvalue
+class EngGLAttribute final: public EngGLvalue
 {
 public:
-    void clear();
     void bind();
     void unbind();
     bool write(const GLfloat*);

@@ -2,8 +2,8 @@
 
 ConcurentQueue::ConcurentQueue()
 {
-    first = NULL;
-    back = NULL;
+    first = nullptr;
+    back = nullptr;
 	queue_size = 0;
 	max_size = 50;
 	critical_queue = 0;
@@ -11,8 +11,8 @@ ConcurentQueue::ConcurentQueue()
 
 ConcurentQueue::ConcurentQueue(bool crit)
 {
-    first = NULL;
-    back = NULL;
+    first = nullptr;
+    back = nullptr;
 	queue_size = 0;
 	max_size = 50;
 	critical_queue = crit;
@@ -29,34 +29,22 @@ void ConcurentQueue::push(Buffer* bufin)
 		{
 			Buffer* retbuf = pop();
 			mlock.lock();
-			if (retbuf != NULL)
-			{
-				if (retbuf->buff != NULL)
-					delete [] retbuf->buff;
-				delete retbuf;
-			}
+            retbuf->data.reset(nullptr);
+            delete retbuf;
 		}
 	}
-	if (first==NULL)
+    if (first == nullptr)
 	{
-		first = new Spisok;
-        first->next = NULL;
-		first->buf = bufin;
-		back = first;
-	} else if (first == back)
-	{
-		Spisok* sp = new Spisok;
-		sp->buf = bufin;
-        sp->next = NULL;
-		back = sp;
-		first -> next = back;
+        first = new List;
+        back = first;
+        back->next = nullptr;
+        back->buffer.reset(bufin);
 	} else
 	{
-		Spisok* sp = new Spisok;
-		sp->buf = bufin;
-        sp->next = NULL;
-		back->next = sp;
-		back = sp;
+        back->next = new List;
+        back->next->buffer.reset(bufin);
+        back->next->next = nullptr;
+        back = back->next;
 	}
 	queue_size++;
 	wait_cond.notify_one();
@@ -66,7 +54,7 @@ void ConcurentQueue::push(Buffer* bufin)
 Buffer* ConcurentQueue::pop()
 {
 	std::unique_lock<std::mutex> mlock(lock_mutex);
-	Buffer* retbuf;
+    Buffer* retbuf = nullptr;
 	if (queue_size == 0)
 	{
 		if ((!critical_queue) && (max_size!=0))
@@ -74,27 +62,20 @@ Buffer* ConcurentQueue::pop()
 		if ((critical_queue) && (max_size!=0))
 		{
 			Buffer* retbuf = new Buffer;
-            retbuf->buff = new char;
-            retbuf->buff[0] = '\0';
-			retbuf->buffsize = 1;
+            retbuf->data = std::unique_ptr<char[]>(new char[1]);
+            retbuf->data.get()[0] = '\0';
+            retbuf->datasize = 1;
 			mlock.unlock();
 			push(retbuf);
 			mlock.lock();
 		}
 	}
-	if (first==back)
-	{
-		retbuf = first->buf;
-		delete first;
-		first = nullptr;
-	} else
-	{
-		Spisok* dlspsk;
-		retbuf = first->buf;
-		dlspsk = first;
-		first = first -> next;
-		delete dlspsk;
-	}
+    retbuf = first->buffer.release();
+    List* nextelem = first->next;
+    delete first;
+    first = nextelem;
+    if (first == nullptr)
+        back = nullptr;
 	queue_size--;
 	wait_cond.notify_one();
 	mlock.unlock();
@@ -118,15 +99,11 @@ void ConcurentQueue::set_priority(bool prior)
 
 void ConcurentQueue::clean()
 {
-    while (first != NULL)
+    while (first != nullptr)
 	{
 		Buffer* retbuf = pop();
-		if (retbuf != NULL)
-		{
-			if (retbuf->buff != NULL)
-				delete [] retbuf->buff;
-			delete retbuf;
-		}
+        retbuf->data.reset(nullptr);
+        delete retbuf;
 		
 	}
 }

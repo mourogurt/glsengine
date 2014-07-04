@@ -1,6 +1,10 @@
 #include "engInit.hpp"
 
+#ifdef ENG_USE_CL
 void EngInit::setCallback(unsigned int num, void *func, void *data, unsigned int numwindow)
+#else
+void EngInit::setCallback(unsigned int num, void *func, unsigned int numwindow)
+#endif
 {
     switch (num)
     {
@@ -231,9 +235,11 @@ void EngInit::clearALL()
         destroyGLWindow(i);
         i--;
     }
-    #ifdef _DEBUG
-    log.writeLog(std::string("clearALL() OK"));
-    #endif
+}
+
+EngInit::~EngInit()
+{
+    clearALL();
 }
 
 void EngInit::setCurrentMonitor(unsigned int numwindow)

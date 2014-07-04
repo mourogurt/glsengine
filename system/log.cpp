@@ -12,9 +12,9 @@ std::vector<std::string> Log::getLog()
 	while (log.size() > 0)
 	{
 		Buffer* buf = log.pop();
-		std::string str (buf->buff,buf->buff+buf->buffsize);
+        std::string str (buf->data.get(),buf->data.get()+buf->datasize);
 		outlog.push_back(str);
-		delete [] buf->buff;
+        buf->data.reset(nullptr);
 		delete buf;
 	}
 	return outlog;
@@ -23,9 +23,10 @@ std::vector<std::string> Log::getLog()
 void Log::writeLog(std::string str)
 {
 	Buffer* buf = new Buffer;
-	buf->buff = new char[str.size()];
-	memcpy (buf->buff,str.c_str(),str.size());
-	buf->buffsize = str.size();
+    buf->data = std::unique_ptr<char[]>(new char[str.size()+1]);
+    memcpy (buf->data.get(),str.c_str(),str.size());
+    buf->data.get()[str.size()] = '\0';
+    buf->datasize = str.size();
 	log.push(buf);
 }
 
