@@ -244,6 +244,9 @@ void EngCustomShader::cleanShader()
         cleanShaderStage(GL_TESS_CONTROL_SHADER);
     if (VStage != 0)
         cleanShaderStage(GL_VERTEX_SHADER);
+    #ifdef _DEBUG
+    log.writeLog(std::string("cleanShader() OK"));
+    #endif
 }
 
 void EngCustomShader::cleanProgram()

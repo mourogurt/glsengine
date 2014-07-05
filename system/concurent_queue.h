@@ -7,13 +7,13 @@
 
 struct Buffer
 {
-   std::unique_ptr<char[]> data;
+   char* data;
    unsigned int datasize;
 };
 
 struct List
 {
-    std::unique_ptr<Buffer> buffer;
+    Buffer* buffer;
     List* next;
 };
 

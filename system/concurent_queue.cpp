@@ -29,20 +29,20 @@ void ConcurentQueue::push(Buffer* bufin)
 		{
 			Buffer* retbuf = pop();
 			mlock.lock();
-            retbuf->data.reset(nullptr);
-            delete retbuf;
+            free(retbuf->data);
+            free(retbuf);
 		}
 	}
     if (first == nullptr)
 	{
-        first = new List;
+        first = (List*)malloc(sizeof(List));
         back = first;
         back->next = nullptr;
-        back->buffer.reset(bufin);
+        back->buffer = bufin;
 	} else
 	{
-        back->next = new List;
-        back->next->buffer.reset(bufin);
+        back->next = (List*)malloc(sizeof(List));
+        back->next->buffer = bufin;
         back->next->next = nullptr;
         back = back->next;
 	}
@@ -61,18 +61,18 @@ Buffer* ConcurentQueue::pop()
 			wait_cond.wait(mlock,[&](){return queue_size > 0;});
 		if ((critical_queue) && (max_size!=0))
 		{
-			Buffer* retbuf = new Buffer;
-            retbuf->data = std::unique_ptr<char[]>(new char[1]);
-            retbuf->data.get()[0] = '\0';
+            Buffer* retbuf = (Buffer*)malloc(sizeof(Buffer));
+            retbuf->data = (char*)malloc(sizeof(char));
+            retbuf->data[0] = '\0';
             retbuf->datasize = 1;
 			mlock.unlock();
 			push(retbuf);
 			mlock.lock();
 		}
 	}
-    retbuf = first->buffer.release();
+    retbuf = first->buffer;
     List* nextelem = first->next;
-    delete first;
+    free (first);
     first = nextelem;
     if (first == nullptr)
         back = nullptr;
@@ -102,8 +102,8 @@ void ConcurentQueue::clean()
     while (first != nullptr)
 	{
 		Buffer* retbuf = pop();
-        retbuf->data.reset(nullptr);
-        delete retbuf;
+        free(retbuf->data);
+        free (retbuf);
 		
 	}
 }
