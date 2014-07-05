@@ -15,17 +15,16 @@ std::vector<std::string> Log::getLog()
         std::string str (buf->data,buf->data+buf->datasize);
 		outlog.push_back(str);
         free(buf->data);
-		delete buf;
+        free(buf);
 	}
 	return outlog;
 }
 
 void Log::writeLog(std::string str)
 {
-	Buffer* buf = new Buffer;
-    buf->data = (char*)malloc(str.size() + 1);
+    Buffer* buf = (Buffer*)malloc(sizeof(Buffer));
+    buf->data = (char*)malloc(str.size());
     memcpy (buf->data,str.c_str(),str.size());
-    buf->data[str.size()] = '\0';
     buf->datasize = str.size();
 	log.push(buf);
 }
