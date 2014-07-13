@@ -32,3 +32,7 @@ unix {
 include(deployment.pri)
 qtcAddDeployment()
 
+OTHER_FILES += \
+    vert.glsl \
+    frag.glsl
+

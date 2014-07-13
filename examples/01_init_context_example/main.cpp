@@ -7,7 +7,7 @@ int main()
 {
     EngInit init;
     init.setHint({GLFW_VISIBLE,GL_FALSE});
-    init.createGLWindow("init gl context",1,1);
+    init.createGLWindow("Example 1",1,1);
     GLint sup_major = 0;
     GLint sup_minor = 0;
     glGetIntegerv(GL_MAJOR_VERSION, &sup_major);

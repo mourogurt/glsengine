@@ -2,10 +2,14 @@ TEMPLATE = lib
 CONFIG += staticlib
 HEADERS = engInit.hpp \
     engCustomShader.hpp \
-    engData.hpp
+    engScene.hpp \
+    engValue.hpp \
+    engBuffer.hpp
 SOURCES = engInit.cpp \
     engCustomShader.cpp \
-    engData.cpp
+    engScene.cpp \
+    engValue.cpp \
+    engBuffer.cpp
 QMAKE_CXXFLAGS += -std=c++11
 #DEFINES += ENG_USE_CL
 

@@ -3,7 +3,7 @@
 #include <cmath>
 #include <engInit.hpp>
 #include <engCustomShader.hpp>
-#include <engData.hpp>
+#include <engValue.hpp>
 
 using namespace std;
 
@@ -33,14 +33,13 @@ int main()
     float color[4];
     float pos[4];
     EngGLAttribute value1,value2;
+    GLuint VAO;
+    glGenVertexArrays(1,&VAO);
+    glBindVertexArray(VAO);
     value1.setProgram(program);
-    value1.setName("vcolor\0");
-    value1.setLength(4);
-    value1.bind();
+    value1.bind("vcolor");
     value2.setProgram(program);
-    value2.setName("position\0");
-    value2.setLength(4);
-    value2.bind();
+    value2.bind("position");
     glUseProgram(program);
     glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
     glPointSize(5.0);
@@ -57,17 +56,15 @@ int main()
         color[1] = sin(eps);
         color[2] = cos(eps)*cos(eps) + sin(eps)*sin(eps);
         color[3] = 1.0f;
-        value2.write(pos);
-        value1.write(color);
+        value2.write(pos,4);
+        value1.write(color,4);
         glClear(GL_COLOR_BUFFER_BIT);
         glDrawArrays(GL_POINTS, 0, 1);
         glfwSwapBuffers(platform->controll_window);
         glfwPollEvents();
     } while (glfwGetKey(platform->controll_window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
              glfwWindowShouldClose(platform->controll_window) == 0);
-    int* ptr = NULL;
-    delete ptr;
-    delete ptr;
+    glDeleteVertexArrays(1,&VAO);
     shader.cleanShader();
     initgl.clearALL();
     return 0;

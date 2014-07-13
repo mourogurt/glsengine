@@ -11,9 +11,6 @@ EngCustomShader::EngCustomShader()
     FStage = 0;
     CStage = 0;
     Program = 0;
-    #ifdef _DEBUG
-    log.writeLog(std::string("EngCustomShader() OK"));
-    #endif
 }
 
 GLuint EngCustomShader::compileShaderStage(GLuint stage, std::string source)
@@ -244,18 +241,12 @@ void EngCustomShader::cleanShader()
         cleanShaderStage(GL_TESS_CONTROL_SHADER);
     if (VStage != 0)
         cleanShaderStage(GL_VERTEX_SHADER);
-    #ifdef _DEBUG
-    log.writeLog(std::string("cleanShader() OK"));
-    #endif
 }
 
 void EngCustomShader::cleanProgram()
 {
     glDeleteProgram(Program);
     Program = 0;
-    #ifdef _DEBUG
-    log.writeLog(std::string("cleanProgram() OK"));
-    #endif
 }
 
 void EngCustomShader::cleanShaderStage(GLuint stage)
@@ -285,16 +276,10 @@ void EngCustomShader::cleanShaderStage(GLuint stage)
         glDeleteShader(VStage);
         VStage = 0;
     }
-    #ifdef _DEBUG
-    log.writeLog(std::string("cleanShaderStage(GLuint)OK"));
-    #endif
 }
 
 GLuint EngCustomShader::getProgramID()
 {
-    #ifdef _DEBUG
-    log.writeLog(std::string("getProgramID()OK"));
-    #endif
     return Program;
 }
 

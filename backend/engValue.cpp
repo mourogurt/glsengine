@@ -1,92 +1,34 @@
-#include "engData.hpp"
+#include "engValue.hpp"
 
-EngGLvalue::EngGLvalue()
-{
-    glGenVertexArrays(1,&VAO);
-    glBindVertexArray(VAO);
-    length = 0;
-    name = NULL;
-    #ifdef _DEBUG
-    log.writeLog("EngGLData() OK");
-    #endif
-}
 
-void EngGLvalue::setLength(GLuint lengthi)
+bool EngGLAttribute::bind(std::string str)
 {
-    length = lengthi;
-    #ifdef _DEBUG
-    log.writeLog("setLength(GLuint) OK");
-    #endif
-}
-
-void EngGLvalue::setName(const char* namei)
-{
-    name.reset(nullptr);
-    name = std::unique_ptr<char[]>(new char[strlen(namei)+1]);
-    strcpy(name.get(),namei);
-    #ifdef _DEBUG
-    log.writeLog("setName(char*) OK");
-    #endif
-}
-
-void EngGLvalue::setProgram(GLuint programi)
-{
-    program = programi;
-    #ifdef _DEBUG
-    log.writeLog("setProgram(GLuint) OK");
-    #endif
-}
-
-std::vector<std::string> EngGLvalue::getLog()
-{
-    return log.getLog();
-}
-
-std::vector<std::string> EngGLvalue::getErrLog()
-{
-    return errlog.getLog();
-}
-
-void EngGLvalue::clear()
-{
-    name.reset(nullptr);
-    #ifdef _DEBUG
-    log.writeLog("clear() OK");
-    #endif
-}
-
-EngGLvalue::~EngGLvalue()
-{
-    clear();
-}
-
-void EngGLAttribute::bind()
-{
-    location = glGetAttribLocation(program,name.get());
+    location = glGetAttribLocation(program,str.c_str());
     if (location == -1)
     {
         #ifdef _DEBUG
         log.writeLog(std::string("Add errlog"));
         #endif
         errlog.writeLog("Nonexistent location of vertex attribute");
-        return;
+        return 1;
     }
     #ifdef _DEBUG
-    log.writeLog("bind() OK");
+    log.writeLog("bind(std::string) OK");
     #endif
+    return 0;
 }
 
-void EngGLAttribute::unbind()
+void EngGLAttribute::bind(GLint locationi)
 {
-    location = -1;
-    name.reset(nullptr);
-    #ifdef _DEBUG
-    log.writeLog("unbind() OK");
-    #endif
+    location = locationi;
 }
 
+void EngGLAttribute::setProgram(GLuint programi)
+{
+    program = programi;
+}
 
-bool EngGLAttribute::write(const GLfloat* data)
+bool EngGLAttribute::write(const GLfloat* data, unsigned length)
 {
     if (location == -1)
     {
@@ -111,10 +53,13 @@ bool EngGLAttribute::write(const GLfloat* data)
         errlog.writeLog("Wrong length parameter");
         return 1;
     }
+    #ifdef _DEBUG
+    log.writeLog(std::string("write(const GLfloat*,unsigned) OK"));
+    #endif
     return 0;
 }
 
-bool EngGLAttribute::write(const GLdouble* data)
+bool EngGLAttribute::write(const GLdouble* data, unsigned length)
 {
     if (location == -1)
     {
@@ -139,10 +84,13 @@ bool EngGLAttribute::write(const GLdouble* data)
         errlog.writeLog("Wrong length parameter");
         return 1;
     }
+    #ifdef _DEBUG
+    log.writeLog(std::string("write(const GLdouble*,unsigned) OK"));
+    #endif
     return 0;
 }
 
-bool EngGLAttribute::write(const GLshort* data)
+bool EngGLAttribute::write(const GLshort* data, unsigned length)
 {
     if (location == -1)
     {
@@ -167,11 +115,18 @@ bool EngGLAttribute::write(const GLshort* data)
         errlog.writeLog("Wrong length parameter");
         return 1;
     }
+    #ifdef _DEBUG
+    log.writeLog(std::string("write(const GLshort*,unsigned) OK"));
+    #endif
     return 0;
 }
 
-EngGLbuffer::EngGLbuffer()
+std::vector<std::string> EngGLAttribute::getLog()
 {
-    glGenVertexArrays(1,&VAO);
-    glGenBuffers(1,&VBO);
+    return log.getLog();
+}
+
+std::vector<std::string> EngGLAttribute::getErrLog()
+{
+    return errlog.getLog();
 }

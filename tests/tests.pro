@@ -1,4 +1,4 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-    concurent_queue_test1
+    buf_performance_test1

@@ -81,23 +81,16 @@ std::vector<std::string> EngInit::getErrLog()
 void EngInit::setHint(std::initializer_list<int> args)
 {
     hints = args;
-    #ifdef _DEBUG
-    log.writeLog(std::string("setHint(std::initializer_list<int>) OK"));
-    #endif
 }
 
 EngInit::EngInit()
 {
 	GLInit = false;
-    glplatforms.clear();
     #ifdef ENG_USE_CL
     CLInit = false;
     numPlatforms = 0;
     clplatforms.clear();
     contextfunc = nullptr;
-    #endif
-    #ifdef _DEBUG
-    log.writeLog(std::string("EngInit() OK"));
     #endif
 }
 
@@ -262,9 +255,6 @@ void EngInit::setCurrentMonitor(unsigned int numwindow)
 void EngInit::cleanThreadFromMonitors()
 {
     glfwMakeContextCurrent(NULL);
-    #ifdef _DEBUG
-    log.writeLog(std::string("cleanThreadFromMonitors() OK"));
-    #endif
 }
 
 void EngInit::destroyGLWindow(unsigned int numwindow)
@@ -314,9 +304,6 @@ void EngInit::clearCL()
         delete [] pltmp;
         CLInit = false;
     }
-    #ifdef _DEBUG
-    log.writeLog(std::string("clearCL() OK"));
-    #endif
 }
 
 unsigned int EngInit::initCL()

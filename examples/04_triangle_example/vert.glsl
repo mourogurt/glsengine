@@ -1,11 +1,11 @@
 #version 330 core
 
 attribute vec4 vcolor;
-attribute vec4 position;
+attribute vec3 pos;
 out vec4 fcolor;
 
 void main(void)
 {
-    gl_Position = position;
+    gl_Position = vec4(pos,1.0f);
     fcolor = vcolor;
 }
