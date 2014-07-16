@@ -1,4 +1,4 @@
-Space-game-engine
+OpenGL simple game engine
 =======================
 
 To compile engine you need install: 
