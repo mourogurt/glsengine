@@ -22,4 +22,23 @@ private:
     Log errlog;
 };
 
+class EngGLUniform
+{
+public:
+    bool bind(std::string);
+    void bind(GLint);
+    void setProgram(GLuint);
+    bool write(const GLfloat*, unsigned, GLsizei);
+    bool write(const GLint*, unsigned, GLsizei);
+    bool write(const GLuint*, unsigned, GLsizei);
+    bool write(const GLfloat*, unsigned, unsigned, GLsizei, GLboolean transpose = GL_FALSE);
+    std::vector<std::string> getLog();
+    std::vector<std::string> getErrLog();
+private:
+    GLuint program;
+    GLint location;
+    Log log;
+    Log errlog;
+};
+
 #endif // ENGVALUE_HPP

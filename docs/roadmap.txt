@@ -5,15 +5,11 @@ EngInit:
 * Add checking GL version (not started)
 EngObject:
 * Vertex Attribute objects (beta ready/need tests)
-* Vertex buffer objects (started maxis11)
-* Uniform objects (not started)
+* Vertex buffer objects (beta ready/need tests)
+* Uniform objects (beta ready/need tests)
 * Uniform buffer objects (not started)
-* Buffers (not started)
 * Samplers (not started)
 * Textures (not started)
-* OpenCL buffers (not started)
-* OpenCL textures (not started)
-* OpenCL kernels (not started)
 * Check for memory leak / optimization to merge into master branch (not started)
 * Operators (not started)
 EngRender:

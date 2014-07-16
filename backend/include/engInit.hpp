@@ -2,7 +2,7 @@
 #define ENGINIT_HPP
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include "../system/log.h"
+#include "log.hpp"
 #ifdef ENG_USE_CL
 #include <CL/cl.h>
 #include <CL/cl_gl.h>
