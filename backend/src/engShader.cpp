@@ -1,5 +1,4 @@
 #include "engShader.hpp"
-#include <iostream>
 #include <string>
 
 GLuint EngShader::current_program = 0;
