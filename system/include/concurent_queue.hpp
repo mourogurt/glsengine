@@ -4,6 +4,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <cstring>
+#include <cstdlib>
 
 struct Buffer
 {

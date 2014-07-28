@@ -1,9 +1,9 @@
 #ifndef _IF_LOG_H
 #define _IF_LOG_H
 #include <mutex>
-#include "concurent_queue.hpp"
+#include <concurent_queue.hpp>
 #include <vector>
-#include <cstring>
+#include <string>
 
 class Log  //Класс лога
 {
