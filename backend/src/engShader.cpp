@@ -2,6 +2,8 @@
 #include <iostream>
 #include <string>
 
+GLuint EngShader::current_program = 0;
+
 EngShader::EngShader() {
   VStage = 0;
   TCStage = 0;

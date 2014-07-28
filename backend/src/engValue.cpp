@@ -1,7 +1,5 @@
 #include "engValue.hpp"
 
-GLuint EngShader::current_program = 0;
-
 bool EngGLAttribute::bind(std::string str) {
   location = glGetAttribLocation(shader->getProgramID(), str.c_str());
   if (location == -1) {
