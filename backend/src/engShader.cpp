@@ -1,9 +1,9 @@
 #include "engShader.hpp"
 #include <string>
 
-GLuint EngShader::current_program = 0;
+GLuint EngGLShader::current_program = 0;
 
-EngShader::EngShader() {
+EngGLShader::EngGLShader() {
   VStage = 0;
   TCStage = 0;
   TEStage = 0;
@@ -13,159 +13,53 @@ EngShader::EngShader() {
   Program = 0;
 }
 
-GLuint EngShader::compileShaderStage(GLuint stage, std::string source) {
-  if (stage == GL_VERTEX_SHADER) {
-    if (VStage != 0)
-      cleanShaderStage(stage);
-    VStage = glCreateShader(stage);
+GLuint EngGLShader::compileShaderStage(GLuint stage, std::string &source) {
+    if ((stage != GL_VERTEX_SHADER) && (stage != GL_TESS_CONTROL_SHADER)
+         && (stage != GL_TESS_EVALUATION_SHADER) && (stage != GL_GEOMETRY_SHADER)
+         && (stage != GL_FRAGMENT_SHADER) && (stage != GL_COMPUTE_SHADER))
+    {
+        dlog("Add errlog");
+        errlog.writeLog("Unknown shader stage");
+        return GL_FALSE;
+    }
+    cleanShaderStage(stage);
+    GLuint cur_stage = glCreateShader(stage);
     char const *source_pointer = source.c_str();
-    glShaderSource(VStage, 1, &source_pointer, NULL);
-    glCompileShader(VStage);
+    glShaderSource(cur_stage, 1, &source_pointer, NULL);
+    glCompileShader(cur_stage);
     {
       GLint result;
-      glGetShaderiv(VStage, GL_COMPILE_STATUS, &result);
+      glGetShaderiv(cur_stage, GL_COMPILE_STATUS, &result);
       if (result == GL_FALSE) {
         GLsizei lengthmsg;
-        glGetShaderiv(VStage, GL_INFO_LOG_LENGTH, &lengthmsg);
+        glGetShaderiv(cur_stage, GL_INFO_LOG_LENGTH, &lengthmsg);
         GLchar *logmsg[lengthmsg];
-        glGetShaderInfoLog(VStage, lengthmsg, NULL, (GLchar *)logmsg);
-        cleanShaderStage(stage);
-#ifdef _DEBUG
-        log.writeLog(std::string("Add errlog"));
-#endif
+        glGetShaderInfoLog(cur_stage, lengthmsg, NULL, (GLchar *)logmsg);
+        glDeleteShader(cur_stage);
+        dlog("Add errlog");
         errlog.writeLog(std::string((const char *)logmsg));
         return result;
       }
     }
-  } else if (stage == GL_TESS_CONTROL_SHADER) {
-    if (TCStage != 0)
-      cleanShaderStage(stage);
-    TCStage = glCreateShader(stage);
-    char const *source_pointer = source.c_str();
-    glShaderSource(TCStage, 1, &source_pointer, NULL);
-    glCompileShader(TCStage);
-    {
-      GLint result;
-      glGetShaderiv(TCStage, GL_COMPILE_STATUS, &result);
-      if (result == GL_FALSE) {
-        GLsizei lengthmsg;
-        glGetShaderiv(TCStage, GL_INFO_LOG_LENGTH, &lengthmsg);
-        GLchar *logmsg[lengthmsg];
-        glGetShaderInfoLog(TCStage, lengthmsg, NULL, (GLchar *)logmsg);
-        cleanShaderStage(stage);
-#ifdef _DEBUG
-        log.writeLog(std::string("Add errlog"));
-#endif
-        errlog.writeLog(std::string((const char *)logmsg));
-        return result;
-      }
-    }
-  } else if (stage == GL_TESS_EVALUATION_SHADER) {
-    if (TEStage != 0)
-      cleanShaderStage(stage);
-    TEStage = glCreateShader(stage);
-    char const *source_pointer = source.c_str();
-    glShaderSource(TEStage, 1, &source_pointer, NULL);
-    glCompileShader(TEStage);
-    {
-      GLint result;
-      glGetShaderiv(TEStage, GL_COMPILE_STATUS, &result);
-      if (result == GL_FALSE) {
-        GLsizei lengthmsg;
-        glGetShaderiv(TEStage, GL_INFO_LOG_LENGTH, &lengthmsg);
-        GLchar *logmsg[lengthmsg];
-        glGetShaderInfoLog(TEStage, lengthmsg, NULL, (GLchar *)logmsg);
-        cleanShaderStage(stage);
-#ifdef _DEBUG
-        log.writeLog(std::string("Add errlog"));
-#endif
-        errlog.writeLog(std::string((const char *)logmsg));
-        return result;
-      }
-    }
-  } else if (stage == GL_GEOMETRY_SHADER) {
-    if (GStage != 0)
-      cleanShaderStage(stage);
-    GStage = glCreateShader(stage);
-    char const *source_pointer = source.c_str();
-    glShaderSource(GStage, 1, &source_pointer, NULL);
-    glCompileShader(GStage);
-    {
-      GLint result;
-      glGetShaderiv(GStage, GL_COMPILE_STATUS, &result);
-      if (result == GL_FALSE) {
-        GLsizei lengthmsg;
-        glGetShaderiv(GStage, GL_INFO_LOG_LENGTH, &lengthmsg);
-        GLchar *logmsg[lengthmsg];
-        glGetShaderInfoLog(GStage, lengthmsg, NULL, (GLchar *)logmsg);
-        cleanShaderStage(stage);
-#ifdef _DEBUG
-        log.writeLog(std::string("Add errlog"));
-#endif
-        errlog.writeLog(std::string((const char *)logmsg));
-        return result;
-      }
-    }
-  } else if (stage == GL_FRAGMENT_SHADER) {
-    if (FStage != 0)
-      cleanShaderStage(stage);
-    FStage = glCreateShader(stage);
-    char const *source_pointer = source.c_str();
-    glShaderSource(FStage, 1, &source_pointer, NULL);
-    glCompileShader(FStage);
-    {
-      GLint result;
-      glGetShaderiv(FStage, GL_COMPILE_STATUS, &result);
-      if (result == GL_FALSE) {
-        GLsizei lengthmsg;
-        glGetShaderiv(FStage, GL_INFO_LOG_LENGTH, &lengthmsg);
-        GLchar *logmsg[lengthmsg];
-        glGetShaderInfoLog(FStage, lengthmsg, NULL, (GLchar *)logmsg);
-        cleanShaderStage(stage);
-#ifdef _DEBUG
-        log.writeLog(std::string("Add errlog"));
-#endif
-        errlog.writeLog(std::string((const char *)logmsg));
-        return result;
-      }
-    }
-  } else if (stage == GL_COMPUTE_SHADER) {
-    if (CStage != 0)
-      cleanShaderStage(stage);
-    CStage = glCreateShader(stage);
-    char const *source_pointer = source.c_str();
-    glShaderSource(CStage, 1, &source_pointer, NULL);
-    glCompileShader(CStage);
-    {
-      GLint result;
-      glGetShaderiv(CStage, GL_COMPILE_STATUS, &result);
-      if (result == GL_FALSE) {
-        GLsizei lengthmsg;
-        glGetShaderiv(TCStage, GL_INFO_LOG_LENGTH, &lengthmsg);
-        GLchar *logmsg[lengthmsg];
-        glGetShaderInfoLog(TCStage, lengthmsg, NULL, (GLchar *)logmsg);
-        cleanShaderStage(stage);
-#ifdef _DEBUG
-        log.writeLog(std::string("Add errlog"));
-#endif
-        errlog.writeLog(std::string((const char *)logmsg));
-        return result;
-      }
-    }
-  } else {
-#ifdef _DEBUG
-    log.writeLog(std::string("Add errlog"));
-#endif
-    errlog.writeLog(std::string("Unsupported/unknow stage"));
-    return GL_FALSE;
-  }
-#ifdef _DEBUG
-  log.writeLog(std::string("compileShaderStage(GLuint,std::string) OK"));
-#endif
+    switch (stage) {
+    case GL_VERTEX_SHADER:
+        if (VStage != 0) cleanShaderStage(VStage); VStage = cur_stage; break;
+    case GL_TESS_CONTROL_SHADER:
+        if (VStage != 0) cleanShaderStage(TCStage); TCStage = cur_stage; break;
+    case GL_TESS_EVALUATION_SHADER:
+        if (VStage != 0) cleanShaderStage(TEStage); TEStage = cur_stage; break;
+    case GL_GEOMETRY_SHADER:
+        if (VStage != 0) cleanShaderStage(GStage); GStage = cur_stage; break;
+    case GL_FRAGMENT_SHADER:
+        if (VStage != 0) cleanShaderStage(FStage); FStage = cur_stage; break;
+    case GL_COMPUTE_SHADER:
+        if (CStage != 0) cleanShaderStage(CStage); CStage = cur_stage; break;
+    };
+  dlog("compileShaderStage(GLuint,std::string) OK");
   return GL_TRUE;
 }
 
-GLuint EngShader::linkShader() {
+GLuint EngGLShader::linkShader() {
   if (Program != 0)
     cleanProgram();
   Program = glCreateProgram();
@@ -204,7 +98,7 @@ GLuint EngShader::linkShader() {
   return GL_TRUE;
 }
 
-void EngShader::cleanShader() {
+void EngGLShader::cleanShader() {
   if (Program != 0)
     cleanProgram();
   if (CStage != 0)
@@ -221,12 +115,12 @@ void EngShader::cleanShader() {
     cleanShaderStage(GL_VERTEX_SHADER);
 }
 
-void EngShader::cleanProgram() {
+void EngGLShader::cleanProgram() {
   glDeleteProgram(Program);
   Program = 0;
 }
 
-void EngShader::cleanShaderStage(GLuint stage) {
+void EngGLShader::cleanShaderStage(GLuint stage) {
   if (stage == GL_COMPUTE_SHADER) {
     glDeleteShader(CStage);
     CStage = 0;
@@ -248,9 +142,9 @@ void EngShader::cleanShaderStage(GLuint stage) {
   }
 }
 
-GLuint EngShader::getProgramID() { return Program; }
+GLuint EngGLShader::getProgramID() { return Program; }
 
-void EngShader::bind_program()
+void EngGLShader::bind_program()
 {
     if (current_program != Program)
     {
@@ -259,13 +153,13 @@ void EngShader::bind_program()
     }
 }
 
-std::vector<std::string> EngShader::getLog() { return log.getLog(); }
+std::vector<std::string> EngGLShader::getLog() { return log.getLog(); }
 
-std::vector<std::string> EngShader::getErrLog() {
+std::vector<std::string> EngGLShader::getErrLog() {
   return errlog.getLog();
 }
 
-EngShader::~EngShader()
+EngGLShader::~EngGLShader()
 {
     if (current_program == Program)
     {

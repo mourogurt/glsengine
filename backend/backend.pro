@@ -6,7 +6,8 @@ HEADERS = ./include/engInit.hpp \
     ./include/engShader.hpp \
     ./include/engScene.hpp \
     ./include/engValue.hpp \
-    ./include/engBuffer.hpp
+    ./include/engBuffer.hpp \
+    include/EngGLUBOTemplate.hpp
 SOURCES = ./src/engInit.cpp \
     ./src/engShader.cpp \
     ./src/engScene.cpp \

@@ -28,6 +28,12 @@
 #define MONITORFUN 14
 #define CLCONTEXTFUN 15
 
+#ifdef _DEBUG
+#define dlog(n) log.writeLog(n);
+#else
+#define dlog(n)
+#endif
+
 #ifdef ENG_USE_CL
 typedef void (*ENG_CL_CALLBACK)(const char *, const void *, size_t, void *);
 

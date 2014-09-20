@@ -1,16 +1,19 @@
 #ifndef ENGBUFFER_HPP
 #define ENGBUFFER_HPP
-#include "engInit.hpp"
-#include "engShader.hpp"
+#include <engInit.hpp>
+#include <engShader.hpp>
+#include <initializer_list>
 
 class EngGLbuffer {
 public:
   EngGLbuffer();
   void allocate(GLsizei size, GLenum type, GLvoid *data = NULL);
   void bind();
+  void bindBase(GLuint);
   void write(GLvoid *, GLsizei, GLsizei offset = 0);
   void *get_ptr(GLenum param = GL_WRITE_ONLY);
   void *get_ptr(GLsizei, GLsizei, GLenum param = GL_WRITE_ONLY);
+  void clear_ptr();
   void clear();
   ~EngGLbuffer();
 
@@ -27,7 +30,9 @@ private:
 class EngGLVBO : public EngGLbuffer {
 public:
   EngGLVBO();
-  void setShader(EngShader*);
+  EngGLVBO(EngGLShader*, GLint locationi = -1);
+  EngGLVBO(EngGLShader*, std::string);
+  void setShader(EngGLShader*);
   bool setLocation(std::string);
   bool setLocation(GLint);
   void bind(GLint vecsize = 4, GLenum type = GL_FLOAT,
@@ -38,22 +43,54 @@ public:
   void render(GLsizei, GLsizei offset = 0, GLenum type = GL_TRIANGLES);
   std::vector<std::string> getLog();
   std::vector<std::string> getErrLog();
-
 private:
   GLint location;
-  EngShader* shader;
-  static GLuint binded_vab;
+  EngGLShader* shader;
+  static GLuint binded_vbo;
   Log log;
   Log errlog;
 };
 
-/*class EngUBO : public EngGLbuffer {
+class EngGLUBO : public EngGLbuffer {
 public:
-  EngUBO();
-  bool setLocation(std::string, GLuint);
-  bool setLocation(GLint);
-  void bind(bool);
+  EngGLUBO();
+  EngGLUBO(EngGLShader*, GLint locationi = -1);
+  EngGLUBO(EngGLShader*, std::string);
+  void setShader(EngGLShader*);
+  void setLocation(GLint locationi = -1);
+  bool setLocation(std::string);
+  unsigned int load(GLenum type);
+  template <typename T>
+  void writeUBOScalar (unsigned,T);
+  template <typename T>
+  void writeUBOVec (unsigned,unsigned,T*);
+  template <typename T>
+  void writeUBOArr (unsigned,unsigned,T*);
+  template <typename T>
+  void writeUBOMat (unsigned,unsigned,unsigned,T*);
+  template <typename T>
+  void writeUBOVecArr (unsigned,unsigned,std::initializer_list<T*>);
+  template <typename T>
+  void writeUBOMatArr (unsigned,unsigned,unsigned,std::initializer_list<T*>);
+  void enable (GLuint, bool must_bind = false);
+  void disable ();
+  void clear();
+  std::vector<std::string> getLog();
+  std::vector<std::string> getErrLog();
+private:
+  GLint location;
+  GLuint bpoint;
+  EngGLShader* shader;
+  static GLuint binded_ubo;
+  GLint buff_size;
+  std::vector<GLuint> indexes;
+  std::vector<GLint> offsets;
+  std::vector<GLint> mstrides;
+  std::vector<GLint> astrides;
+  Log log;
+  Log errlog;
+};
 
-};*/
+#include <EngGLUBOTemplate.hpp>
 
 #endif // ENGBUFFER_HPP

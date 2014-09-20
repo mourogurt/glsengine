@@ -2,10 +2,10 @@
 #define ENGSHADER_HPP
 #include <engInit.hpp>
 
-class EngShader {
+class EngGLShader {
 public:
-  EngShader();
-  GLuint compileShaderStage(GLuint, std::string);
+  EngGLShader();
+  GLuint compileShaderStage(GLuint, std::string&);
   GLuint linkShader();
   void cleanShader();
   void cleanProgram();
@@ -14,7 +14,7 @@ public:
   void bind_program();
   std::vector<std::string> getLog();
   std::vector<std::string> getErrLog();
-  ~EngShader();
+  ~EngGLShader();
 private:
   Log log;
   Log errlog;

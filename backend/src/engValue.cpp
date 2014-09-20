@@ -1,29 +1,35 @@
 #include "engValue.hpp"
 
-bool EngGLAttribute::bind(std::string str) {
+EngGLAttribute::EngGLAttribute(EngGLShader* shaderi, GLint locationi)
+{
+    shader = shaderi;
+    location = locationi;
+}
+
+EngGLAttribute::EngGLAttribute(EngGLShader* shaderi, std::string str)
+{
+    shader = shaderi;
+    setLocation(str);
+}
+
+bool EngGLAttribute::setLocation(std::string str) {
   location = glGetAttribLocation(shader->getProgramID(), str.c_str());
   if (location == -1) {
-#ifdef _DEBUG
-    log.writeLog(std::string("Add errlog"));
-#endif
+    dlog("Add errlog");
     errlog.writeLog("Nonexistent location of vertex attribute");
     return 1;
   }
-#ifdef _DEBUG
-  log.writeLog("bind(std::string) OK");
-#endif
+  dlog("bind(std::string) OK");
   return 0;
 }
 
-void EngGLAttribute::bind(GLint locationi) { location = locationi; }
+void EngGLAttribute::setLocation(GLint locationi) { location = locationi; }
 
-void EngGLAttribute::setShader(EngShader* shaderin) { shader = shaderin; }
+void EngGLAttribute::setShader(EngGLShader* shaderin) { shader = shaderin; }
 
 bool EngGLAttribute::write(const GLfloat *data, unsigned length) {
   if (location == -1) {
-#ifdef _DEBUG
-    log.writeLog(std::string("Add errlog"));
-#endif
+    dlog("Add errlog");
     errlog.writeLog("Attribute is unbinded");
     return 1;
   }
@@ -37,23 +43,17 @@ bool EngGLAttribute::write(const GLfloat *data, unsigned length) {
   else if (length == 4)
     glVertexAttrib4fv(location, data);
   else {
-#ifdef _DEBUG
-    log.writeLog(std::string("Add errlog"));
-#endif
+    dlog("Add errlog");
     errlog.writeLog("Wrong length parameter");
     return 1;
   }
-#ifdef _DEBUG
-  log.writeLog(std::string("write(const GLfloat*,unsigned) OK"));
-#endif
+  dlog("write(const GLfloat*,unsigned) OK");
   return 0;
 }
 
 bool EngGLAttribute::write(const GLdouble *data, unsigned length) {
   if (location == -1) {
-#ifdef _DEBUG
-    log.writeLog(std::string("Add errlog"));
-#endif
+    dlog("Add errlog");
     errlog.writeLog("Attribute is unbinded");
     return 1;
   }
@@ -67,23 +67,17 @@ bool EngGLAttribute::write(const GLdouble *data, unsigned length) {
   else if (length == 4)
     glVertexAttrib4dv(location, data);
   else {
-#ifdef _DEBUG
-    log.writeLog(std::string("Add errlog"));
-#endif
+    dlog("Add errlog");
     errlog.writeLog("Wrong length parameter");
     return 1;
   }
-#ifdef _DEBUG
-  log.writeLog(std::string("write(const GLdouble*,unsigned) OK"));
-#endif
+  dlog("write(const GLdouble*,unsigned) OK");
   return 0;
 }
 
 bool EngGLAttribute::write(const GLshort *data, unsigned length) {
   if (location == -1) {
-#ifdef _DEBUG
-    log.writeLog(std::string("Add errlog"));
-#endif
+    dlog("Add errlog");
     errlog.writeLog("Attribute is unbinded");
     return 1;
   }
@@ -97,15 +91,11 @@ bool EngGLAttribute::write(const GLshort *data, unsigned length) {
   else if (length == 4)
     glVertexAttrib4sv(location, data);
   else {
-#ifdef _DEBUG
-    log.writeLog(std::string("Add errlog"));
-#endif
+    dlog("Add errlog");
     errlog.writeLog("Wrong length parameter");
     return 1;
   }
-#ifdef _DEBUG
-  log.writeLog(std::string("write(const GLshort*,unsigned) OK"));
-#endif
+  dlog("write(const GLshort*,unsigned) OK");
   return 0;
 }
 
@@ -113,30 +103,36 @@ std::vector<std::string> EngGLAttribute::getLog() { return log.getLog(); }
 
 std::vector<std::string> EngGLAttribute::getErrLog() { return errlog.getLog(); }
 
-bool EngGLUniform::bind(std::string str) {
+bool EngGLUniform::setLocation(std::string str) {
   location = glGetUniformLocation(shader->getProgramID(), str.c_str());
   if (location == -1) {
-#ifdef _DEBUG
-    log.writeLog(std::string("Add errlog"));
-#endif
+    dlog("Add errlog");
     errlog.writeLog("Nonexistent location of vertex attribute");
     return 1;
   }
-#ifdef _DEBUG
-  log.writeLog("bind(std::string) OK");
-#endif
+  dlog("bind(std::string) OK");
   return 0;
 }
 
-void EngGLUniform::bind(GLint locationi) { location = locationi; }
+EngGLUniform::EngGLUniform(EngGLShader* shaderi, GLint locationi)
+{
+    shader = shaderi;
+    location = locationi;
+}
 
-void EngGLUniform::setShader(EngShader* shaderin) { shader = shaderin; }
+EngGLUniform::EngGLUniform(EngGLShader* shaderi, std::string str)
+{
+    shader = shaderi;
+    setLocation(str);
+}
+
+void EngGLUniform::setLocation(GLint locationi) { location = locationi; }
+
+void EngGLUniform::setShader(EngGLShader* shaderin) { shader = shaderin; }
 
 bool EngGLUniform::write(const GLfloat *data, unsigned length, GLsizei count) {
   if (location == -1) {
-#ifdef _DEBUG
-    log.writeLog(std::string("Add errlog"));
-#endif
+    dlog("Add errlog");
     errlog.writeLog("Attribute is unbinded");
     return 1;
   }
@@ -150,23 +146,17 @@ bool EngGLUniform::write(const GLfloat *data, unsigned length, GLsizei count) {
   else if (length == 4)
     glUniform4fv(location, count, data);
   else {
-#ifdef _DEBUG
-    log.writeLog(std::string("Add errlog"));
-#endif
+    dlog("Add errlog");
     errlog.writeLog("Wrong length parameter");
     return 1;
   }
-#ifdef _DEBUG
-  log.writeLog(std::string("write(const GLfloat*,unsigned,GLsizei) OK"));
-#endif
+  dlog("write(const GLfloat*,unsigned,GLsizei) OK");
   return 0;
 }
 
 bool EngGLUniform::write(const GLint *data, unsigned length, GLsizei count) {
   if (location == -1) {
-#ifdef _DEBUG
-    log.writeLog(std::string("Add errlog"));
-#endif
+    dlog("Add errlog");
     errlog.writeLog("Attribute is unbinded");
     return 1;
   }
@@ -180,23 +170,17 @@ bool EngGLUniform::write(const GLint *data, unsigned length, GLsizei count) {
   else if (length == 4)
     glUniform4iv(location, count, data);
   else {
-#ifdef _DEBUG
-    log.writeLog(std::string("Add errlog"));
-#endif
+    dlog("Add errlog");
     errlog.writeLog("Wrong length parameter");
     return 1;
   }
-#ifdef _DEBUG
-  log.writeLog(std::string("write(const GLint*,unsigned,GLsizei) OK"));
-#endif
+  dlog("write(const GLint*,unsigned,GLsizei) OK");
   return 0;
 }
 
 bool EngGLUniform::write(const GLuint *data, unsigned length, GLsizei count) {
   if (location == -1) {
-#ifdef _DEBUG
-    log.writeLog(std::string("Add errlog"));
-#endif
+    dlog("Add errlog");
     errlog.writeLog("Attribute is unbinded");
     return 1;
   }
@@ -210,24 +194,18 @@ bool EngGLUniform::write(const GLuint *data, unsigned length, GLsizei count) {
   else if (length == 4)
     glUniform4uiv(location, count, data);
   else {
-#ifdef _DEBUG
-    log.writeLog(std::string("Add errlog"));
-#endif
+    dlog("Add errlog");
     errlog.writeLog("Wrong length parameter");
     return 1;
   }
-#ifdef _DEBUG
-  log.writeLog(std::string("write(const GLuint*,unsigned,GLsizei) OK"));
-#endif
+  dlog("write(const GLuint*,unsigned,GLsizei) OK");
   return 0;
 }
 
 bool EngGLUniform::write(const GLfloat *data, unsigned rows, unsigned colums,
                          GLsizei count, GLboolean transpose) {
   if (location == -1) {
-#ifdef _DEBUG
-    log.writeLog(std::string("Add errlog"));
-#endif
+    dlog("Add errlog");
     errlog.writeLog("Attribute is unbinded");
     return 1;
   }
@@ -251,9 +229,7 @@ bool EngGLUniform::write(const GLfloat *data, unsigned rows, unsigned colums,
   else if ((rows == 4) && (colums == 3))
     glUniformMatrix4x3fv(location, count, transpose, data);
   else {
-#ifdef _DEBUG
-    log.writeLog(std::string("Add errlog"));
-#endif
+    dlog("Add errlog");
     errlog.writeLog("Wrong rows/colums parameter");
     return 1;
   }
@@ -267,9 +243,7 @@ bool EngGLUniform::write(const GLfloat *data, unsigned rows, unsigned colums,
 bool EngGLUniform::write(const GLdouble *data, unsigned rows, unsigned colums,
                          GLsizei count, GLboolean transpose) {
   if (location == -1) {
-#ifdef _DEBUG
-    log.writeLog(std::string("Add errlog"));
-#endif
+    dlog("Add errlog");
     errlog.writeLog("Attribute is unbinded");
     return 1;
   }
@@ -293,16 +267,11 @@ bool EngGLUniform::write(const GLdouble *data, unsigned rows, unsigned colums,
   else if ((rows == 4) && (colums == 3))
     glUniformMatrix4x3dv(location, count, transpose, data);
   else {
-#ifdef _DEBUG
-    log.writeLog(std::string("Add errlog"));
-#endif
+    dlog("Add errlog");
     errlog.writeLog("Wrong rows/colums parameter");
     return 1;
   }
-#ifdef _DEBUG
-  log.writeLog(std::string(
-      "write(const GLfloat*,unsigned,unsigned,GLsizei,GLboolean) OK"));
-#endif
+  dlog("write(const GLfloat*,unsigned,unsigned,GLsizei,GLboolean) OK");
   return 0;
 }
 
