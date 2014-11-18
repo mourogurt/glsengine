@@ -5,11 +5,11 @@
 class EngGLShader {
 public:
   EngGLShader();
-  GLuint compileShaderStage(GLuint, std::string&);
+  GLuint compileShaderStage(gl::GLenum, std::string&);
   GLuint linkShader();
   void cleanShader();
   void cleanProgram();
-  void cleanShaderStage(GLuint);
+  void cleanShaderStage(gl::GLenum);
   GLuint getProgramID();
   void bind_program();
   std::vector<std::string> getLog();
@@ -18,13 +18,13 @@ public:
 private:
   Log log;
   Log errlog;
-  GLuint VStage;
-  GLuint TCStage;
-  GLuint TEStage;
-  GLuint GStage;
-  GLuint FStage;
-  GLuint CStage;
-  GLuint Program;
+  gl::GLuint VStage;
+  gl::GLuint TCStage;
+  gl::GLuint TEStage;
+  gl::GLuint GStage;
+  gl::GLuint FStage;
+  gl::GLuint CStage;
+  gl::GLuint Program;
   static GLuint current_program;
 };
 

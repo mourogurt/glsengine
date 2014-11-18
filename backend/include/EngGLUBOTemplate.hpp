@@ -4,19 +4,19 @@
 #include <engBuffer.hpp>
 
 template <typename T>
-void EngGLUBO::writeUBOScalar(unsigned index,T data)
+void EngGLUBO::writeUBOScalar(T data, unsigned index)
 {
     write(&data,sizeof(T),offsets[index]);
 }
 
 template <typename T>
-void EngGLUBO::writeUBOVec(unsigned index, unsigned length,T* data)
+void EngGLUBO::writeUBOVec(T* data, unsigned index, unsigned length)
 {
     write(data,sizeof(T) * length,offsets[index]);
 }
 
 template <typename T>
-void EngGLUBO::writeUBOArr(unsigned index, unsigned length,T* data)
+void EngGLUBO::writeUBOArr(T* data, unsigned index, unsigned length)
 {
     GLuint offset = offsets[index];
     for (unsigned i = 0; i < length; i++)
@@ -27,7 +27,7 @@ void EngGLUBO::writeUBOArr(unsigned index, unsigned length,T* data)
 }
 
 template <typename T>
-void EngGLUBO::writeUBOMat(unsigned index, unsigned n ,unsigned m,T* data)
+void EngGLUBO::writeUBOMat(T* data, unsigned index, unsigned n ,unsigned m)
 {
     GLuint offset = offsets[index];
     for (unsigned i = 0; i < n; i++)
@@ -38,7 +38,7 @@ void EngGLUBO::writeUBOMat(unsigned index, unsigned n ,unsigned m,T* data)
 }
 
 template <typename T>
-void EngGLUBO::writeUBOVecArr(unsigned index ,unsigned length, std::initializer_list<T*> data)
+void EngGLUBO::writeUBOVecArr(std::initializer_list<T*> data, unsigned index ,unsigned length)
 {
     GLuint offset = offsets[index];
     for (T* x : data)
@@ -49,7 +49,7 @@ void EngGLUBO::writeUBOVecArr(unsigned index ,unsigned length, std::initializer_
 }
 
 template <typename T>
-void EngGLUBO::writeUBOMatArr (unsigned index, unsigned n ,unsigned m,std::initializer_list<T*> data)
+void EngGLUBO::writeUBOMatArr (std::initializer_list<T*> data, unsigned index, unsigned n ,unsigned m)
 {
     GLuint offset = offsets[index];
     for (T* x : data)

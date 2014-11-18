@@ -7,7 +7,7 @@ SOURCES = ./src/concurent_queue.cpp \
 	  ./src/log.cpp
 QMAKE_CXXFLAGS += -std=c++11
 
-DESTDIR = ../lib
+#DESTDIR = ../lib
 
 copydata.commands = $(COPY_DIR) $$PWD/include $$OUT_PWD/../include/system
 first.depends = $(first) copydata

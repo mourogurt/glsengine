@@ -7,24 +7,24 @@
 class EngGLbuffer {
 public:
   EngGLbuffer();
-  void allocate(GLsizei size, GLenum type, GLvoid *data = NULL);
+  void allocate(GLsizei size, gl::GLenum type, GLvoid *data = NULL);
   void bind();
   void bindBase(GLuint);
   void write(GLvoid *, GLsizei, GLsizei offset = 0);
-  void *get_ptr(GLenum param = GL_WRITE_ONLY);
-  void *get_ptr(GLsizei, GLsizei, GLenum param = GL_WRITE_ONLY);
+  void *get_ptr(gl::GLenum param = gl::GLenum(GL_WRITE_ONLY));
+  void *get_ptr(GLsizei, GLsizei, gl::BufferAccessMask param = gl::BufferAccessMask(GL_MAP_WRITE_BIT));
   void clear_ptr();
   void clear();
   ~EngGLbuffer();
 
 protected:
-  void setTarget(GLenum);
+  void setTarget(gl::GLenum);
   void setControll(GLuint *);
 
 private:
   GLuint buffObj;
   GLuint *binded_buff;
-  GLenum target;
+  gl::GLenum target;
 };
 
 class EngGLVBO : public EngGLbuffer {
@@ -35,12 +35,12 @@ public:
   void setShader(EngGLShader*);
   bool setLocation(std::string);
   bool setLocation(GLint);
-  void bind(GLint vecsize = 4, GLenum type = GL_FLOAT,
-            GLboolean normalized = GL_FALSE, GLsizei stride = 0,
+  void bind(GLint vecsize = 4, gl::GLenum type = gl::GLenum(GL_FLOAT),
+            gl::GLboolean normalized = gl::GLboolean(GL_FALSE), GLsizei stride = 0,
             GLvoid *ptr = NULL);
   void enable();
   void disable();
-  void render(GLsizei, GLsizei offset = 0, GLenum type = GL_TRIANGLES);
+  void render(GLsizei, GLsizei offset = 0, gl::GLenum type = gl::GLenum(GL_TRIANGLES));
   std::vector<std::string> getLog();
   std::vector<std::string> getErrLog();
 private:
@@ -51,6 +51,14 @@ private:
   Log errlog;
 };
 
+enum EngGLInfoType
+{
+    ENG_INDEX,
+    ENG_OFFSET,
+    ENG_MSTRIDE,
+    ENG_ASTRIDE
+};
+
 class EngGLUBO : public EngGLbuffer {
 public:
   EngGLUBO();
@@ -59,24 +67,25 @@ public:
   void setShader(EngGLShader*);
   void setLocation(GLint locationi = -1);
   bool setLocation(std::string);
-  unsigned int load(GLenum type);
+  unsigned int load(gl::GLenum type);
   template <typename T>
-  void writeUBOScalar (unsigned,T);
+  void writeUBOScalar (T,unsigned);
   template <typename T>
-  void writeUBOVec (unsigned,unsigned,T*);
+  void writeUBOVec (T*,unsigned,unsigned);
   template <typename T>
-  void writeUBOArr (unsigned,unsigned,T*);
+  void writeUBOArr (T*,unsigned,unsigned);
   template <typename T>
-  void writeUBOMat (unsigned,unsigned,unsigned,T*);
+  void writeUBOMat (T*,unsigned,unsigned,unsigned);
   template <typename T>
-  void writeUBOVecArr (unsigned,unsigned,std::initializer_list<T*>);
+  void writeUBOVecArr (std::initializer_list<T*>,unsigned,unsigned);
   template <typename T>
-  void writeUBOMatArr (unsigned,unsigned,unsigned,std::initializer_list<T*>);
+  void writeUBOMatArr (std::initializer_list<T*>,unsigned,unsigned,unsigned);
   void enable (GLuint, bool must_bind = false);
-  void disable ();
-  void clear();
+  GLuint getVarInfo (unsigned, EngGLInfoType);
   std::vector<std::string> getLog();
   std::vector<std::string> getErrLog();
+  void disable ();
+  void clear();
 private:
   GLint location;
   GLuint bpoint;
@@ -90,6 +99,8 @@ private:
   Log log;
   Log errlog;
 };
+
+//TODO: implement atomic counters
 
 #include <EngGLUBOTemplate.hpp>
 

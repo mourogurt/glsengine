@@ -133,15 +133,7 @@ unsigned int EngInit::createGLWindow(const char *title, unsigned int param1,
   glplatforms.push_back(gltmp);
   if (!GLInit) {
     glfwMakeContextCurrent(gltmp.controll_window);
-    glewExperimental = true;
-    GLenum GlewInitResult = glewInit();
-    if (GLEW_OK != GlewInitResult) {
-      dlog("Add errlog");
-      errlog.writeLog(
-          std::string(((const char *)glewGetErrorString(GlewInitResult))));
-      glfwDestroyWindow(gltmp.controll_window);
-      return 0;
-    }
+    glbinding::Binding::initialize(false);
     GLInit = true;
   }
   dlog("createGLWindow(const char*,unsigned int,unsigned int,unsigned int) OK");

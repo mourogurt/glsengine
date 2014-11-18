@@ -1,6 +1,8 @@
 #ifndef ENGINIT_HPP
 #define ENGINIT_HPP
-#include <GL/glew.h>
+#include <glbinding/gl/gl.h>
+#include <glbinding/Binding.h>
+#define GLFW_USE_EGL
 #include <GLFW/glfw3.h>
 #include <log.hpp>
 #ifdef ENG_USE_CL
@@ -33,7 +35,7 @@
 #else
 #define dlog(n)
 #endif
-
+//TODO: Add loader of functions
 #ifdef ENG_USE_CL
 typedef void (*ENG_CL_CALLBACK)(const char *, const void *, size_t, void *);
 

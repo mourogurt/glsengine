@@ -23,7 +23,7 @@ CONFIG(debug, debug|release){
     DEFINES += _DEBUG
 }
 
-DESTDIR = ../lib
+#DESTDIR = ../lib
 
 copydata.commands = $(COPY_DIR) $$PWD/include $$OUT_PWD/../include/backend
 first.depends = $(first) copydata

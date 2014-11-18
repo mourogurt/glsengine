@@ -1,3 +1,4 @@
 TEMPLATE = subdirs
 SUBDIRS = system  \
-          backend
+          backend \
+    internal_tests

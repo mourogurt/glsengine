@@ -35,9 +35,9 @@ public:
   bool write(const GLint *, unsigned, GLsizei);
   bool write(const GLuint *, unsigned, GLsizei);
   bool write(const GLfloat *, unsigned, unsigned, GLsizei,
-             GLboolean transpose = GL_FALSE);
+             gl::GLboolean transpose = gl::GLboolean(GL_FALSE));
   bool write(const GLdouble *, unsigned, unsigned, GLsizei,
-             GLboolean transpose = GL_FALSE);
+             gl::GLboolean transpose = gl::GLboolean(GL_FALSE));
   std::vector<std::string> getLog();
   std::vector<std::string> getErrLog();
 
