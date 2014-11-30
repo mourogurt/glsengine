@@ -7,12 +7,14 @@ HEADERS = ./include/engInit.hpp \
     ./include/engScene.hpp \
     ./include/engValue.hpp \
     ./include/engBuffer.hpp \
-    include/EngGLUBOTemplate.hpp
+    include/EngGLUBOTemplate.hpp \
+    include/engTexture.hpp
 SOURCES = ./src/engInit.cpp \
     ./src/engShader.cpp \
     ./src/engScene.cpp \
     ./src/engValue.cpp \
-    ./src/engBuffer.cpp
+    ./src/engBuffer.cpp \
+    src/engTexture.cpp
 QMAKE_CXXFLAGS += -std=c++11
 #DEFINES += ENG_USE_CL
 

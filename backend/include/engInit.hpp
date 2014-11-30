@@ -35,7 +35,6 @@
 #else
 #define dlog(n)
 #endif
-//TODO: Add loader of functions
 #ifdef ENG_USE_CL
 typedef void (*ENG_CL_CALLBACK)(const char *, const void *, size_t, void *);
 
@@ -48,49 +47,128 @@ struct EngCLPlatform {
 };
 #endif
 
+/**
+ * @brief
+ *
+ */
 struct EngGLPlatform {
-  int width;
-  int height;
-  GLFWwindow *controll_window;
-  GLFWvidmode *vidmode;
-  GLFWmonitor *monitor;
+  int width; /**< TODO */
+  int height; /**< TODO */
+  GLFWwindow *controll_window; /**< TODO */
+  GLFWvidmode *vidmode; /**< TODO */
+  GLFWmonitor *monitor; /**< TODO */
 };
 
+/**
+ * @brief
+ *
+ */
 class EngInit {
 public:
+  /**
+   * @brief
+   *
+   */
   EngInit();
+  /**
+   * @brief
+   *
+   * @param title
+   * @param param1
+   * @param param2
+   * @return unsigned int
+   */
   unsigned int createGLWindow(const char *title, unsigned int param1 = 0,
                               unsigned int param2 = 0);
+  /**
+   * @brief
+   *
+   * @param title
+   * @param int
+   * @param param1
+   * @param param2
+   * @return unsigned int
+   */
   unsigned int createSharedGLWindow(const char *title, unsigned int,
                                     unsigned int param1 = 0,
                                     unsigned int param2 = 0);
+  /**
+   * @brief
+   *
+   * @param int
+   * @return EngGLPlatform
+   */
   EngGLPlatform *getEngGLPlatform(unsigned int);
+  /**
+   * @brief
+   *
+   * @param int
+   */
   void setCurrentMonitor(unsigned int);
+  /**
+   * @brief
+   *
+   */
   void cleanThreadFromMonitors();
 #ifdef ENG_USE_CL
   void setCallback(unsigned int num, void *func, void *data = nullptr,
                    unsigned int numwindow = 0);
 #else
+  /**
+   * @brief
+   *
+   * @param num
+   * @param func
+   * @param numwindow
+   */
   void setCallback(unsigned int num, void *func, unsigned int numwindow = 0);
 #endif
+  /**
+   * @brief
+   *
+   * @return std::vector<std::string>
+   */
   std::vector<std::string> getLog();
+  /**
+   * @brief
+   *
+   * @return std::vector<std::string>
+   */
   std::vector<std::string> getErrLog();
+  /**
+   * @brief
+   *
+   * @param std::initializer_list<int>
+   */
   void setHint(std::initializer_list<int>);
+  /**
+   * @brief
+   *
+   * @param int
+   */
   void destroyGLWindow(unsigned int);
+  /**
+   * @brief
+   *
+   */
   void clearALL();
 #ifdef ENG_USE_CL
   unsigned int initCL();
   void clearCL();
   EngCLPlatform *getEngCLPlatform(unsigned int);
 #endif
+  /**
+   * @brief
+   *
+   */
   ~EngInit();
 
 private:
-  bool GLInit;
-  Log log;
-  Log errlog;
-  std::initializer_list<int> hints;
-  std::vector<EngGLPlatform> glplatforms;
+  bool GLInit; /**< TODO */
+  Log log; /**< TODO */
+  Log errlog; /**< TODO */
+  std::initializer_list<int> hints; /**< TODO */
+  std::vector<EngGLPlatform> glplatforms; /**< TODO */
 #ifdef ENG_USE_CL
   int errFunc(int, const char *);
   bool CLInit;

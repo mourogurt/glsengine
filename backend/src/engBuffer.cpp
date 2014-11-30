@@ -5,6 +5,7 @@ GLuint EngGLUBO::binded_ubo = 0;
 
 EngGLbuffer::EngGLbuffer() {
   buffObj = 0;
+  maped = GL_FALSE;
   target = gl::GLenum(0);
   gl::glGenBuffers(1, &buffObj);
 }
@@ -41,6 +42,7 @@ void *EngGLbuffer::get_ptr(gl::GLenum param) {
     clear_ptr();
   bind();
   void *ptr = gl::glMapBuffer(target, param);
+  if (ptr != NULL) maped = GL_TRUE;
   return ptr;
 }
 
@@ -49,16 +51,21 @@ void *EngGLbuffer::get_ptr(GLsizei offset, GLsizei size, gl::BufferAccessMask pa
     clear_ptr();
   bind();
   void *ptr = gl::glMapBufferRange(target, offset, size, param);
+  if (ptr != NULL) maped = GL_TRUE;
   return ptr;
 }
 
 void EngGLbuffer::clear_ptr()
 {
-    gl::glUnmapBuffer(target);
+    if (maped == GL_TRUE)
+    {
+        gl::glUnmapBuffer(target);
+        maped = GL_FALSE;
+    }
 }
 
 void EngGLbuffer::clear() {
-  if (*binded_buff != buffObj)
+  if (*binded_buff == buffObj)
     clear_ptr();
   bind();
   gl::glBufferData(target, 0, NULL, gl::GLenum(GL_STATIC_DRAW));

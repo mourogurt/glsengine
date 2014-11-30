@@ -107,7 +107,7 @@ bool EngGLUniform::setLocation(std::string str) {
   location = gl::glGetUniformLocation(shader->getProgramID(), str.c_str());
   if (location == -1) {
     dlog("Add errlog");
-    errlog.writeLog("Nonexistent location of vertex attribute");
+    errlog.writeLog("Nonexistent location of uniform");
     return 1;
   }
   dlog("bind(std::string) OK");

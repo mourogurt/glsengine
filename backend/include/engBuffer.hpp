@@ -22,6 +22,7 @@ protected:
   void setControll(GLuint *);
 
 private:
+  GLboolean maped;
   GLuint buffObj;
   GLuint *binded_buff;
   gl::GLenum target;
@@ -99,8 +100,6 @@ private:
   Log log;
   Log errlog;
 };
-
-//TODO: implement atomic counters
 
 #include <EngGLUBOTemplate.hpp>
 
