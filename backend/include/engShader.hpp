@@ -2,11 +2,16 @@
 #define ENGSHADER_HPP
 #include <engInit.hpp>
 
-class EngGLShader {
+class EngGLProgram {
 public:
-  EngGLShader();
-  GLuint compileShaderStage(gl::GLenum, std::string&);
+  EngGLProgram();
+  GLuint compileShaderStage(gl::GLenum, const std::string&);
+  void setSeparable (gl::GLint);
+  void setCacheable (gl::GLint);
+  void createProgram();
   GLuint linkShader();
+  void saveBinary (std::string&, gl::GLenum&);
+  void loadBinary (const std::string&, const gl::GLenum&);
   void cleanShader();
   void cleanProgram();
   void cleanShaderStage(gl::GLenum);
@@ -14,7 +19,7 @@ public:
   void bind_program();
   std::vector<std::string> getLog();
   std::vector<std::string> getErrLog();
-  ~EngGLShader();
+  ~EngGLProgram();
 private:
   Log log;
   Log errlog;
@@ -25,7 +30,27 @@ private:
   gl::GLuint FStage;
   gl::GLuint CStage;
   gl::GLuint Program;
+  gl::GLint separable;
+  gl::GLint cacheable;
   static GLuint current_program;
+};
+
+class EngGLPipeline
+{
+public:
+    EngGLPipeline();
+    unsigned createProgam();
+    EngGLProgram* getProgram(unsigned);
+    void useProgram(unsigned,gl::UseProgramStageMask);
+    void bindPipeline();
+    void removeProgram(unsigned);
+    void clean();
+    ~EngGLPipeline();
+private:
+    std::vector<EngGLProgram*> programs;
+    std::queue<unsigned> to_delete;
+    gl::GLuint pipeline;
+    //static gl::GLuint current_pipeline;
 };
 
 #endif // ENGSHADER_HPP

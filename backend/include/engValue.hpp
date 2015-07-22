@@ -6,11 +6,11 @@
 
 class EngGLAttribute {
 public:
-  EngGLAttribute(EngGLShader*, GLint locationi = -1);
-  EngGLAttribute(EngGLShader*, std::string);
+  EngGLAttribute(EngGLProgram*, GLint locationi = -1);
+  EngGLAttribute(EngGLProgram*, std::string);
   bool setLocation(std::string);
   void setLocation(GLint);
-  void setShader(EngGLShader*);
+  void setShader(EngGLProgram*);
   bool write(const GLfloat *, unsigned);
   bool write(const GLshort *, unsigned);
   bool write(const GLdouble *, unsigned);
@@ -18,7 +18,7 @@ public:
   std::vector<std::string> getErrLog();
 
 private:
-  EngGLShader* shader;
+  EngGLProgram* shader;
   GLint location;
   Log log;
   Log errlog;
@@ -26,11 +26,11 @@ private:
 
 class EngGLUniform {
 public:
-  EngGLUniform(EngGLShader*, GLint locationi = -1);
-  EngGLUniform(EngGLShader*, std::string);
+  EngGLUniform(EngGLProgram*, GLint locationi = -1);
+  EngGLUniform(EngGLProgram*, std::string);
   bool setLocation(std::string);
   void setLocation(GLint);
-  void setShader(EngGLShader*);
+  void setShader(EngGLProgram*);
   bool write(const GLfloat *, unsigned, GLsizei);
   bool write(const GLint *, unsigned, GLsizei);
   bool write(const GLuint *, unsigned, GLsizei);
@@ -42,7 +42,7 @@ public:
   std::vector<std::string> getErrLog();
 
 private:
-  EngGLShader* shader;
+  EngGLProgram* shader;
   GLint location;
   Log log;
   Log errlog;

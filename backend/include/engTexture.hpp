@@ -23,7 +23,9 @@ class EngGLTexture2D : EngGLTexture
 {
 public:
     EngGLTexture2D();
-    void allocate(GLsizei,GLsizei,GLint levels = 1,gl::GLenum ifmt = gl::GLenum(GL_RGBA8));
+    void allocate(GLsizei, GLsizei, GLvoid* pixels = NULL, GLint level = 0, GLint ifmt = GL_RGBA,
+                  gl::GLenum fmt = gl::GLenum(GL_BGRA), gl::GLenum type = gl::GLenum(GL_UNSIGNED_BYTE));
+    void allocate_storage(GLsizei, GLsizei, GLint levels = 1, gl::GLenum ifmt = gl::GLenum(GL_RGBA8));
     void write(GLvoid*,GLsizei,GLsizei,GLint xoffset = 0,GLint yoffset = 0,GLint level = 0,
                gl::GLenum fmt = gl::GLenum(GL_BGRA),gl::GLenum type = gl::GLenum(GL_UNSIGNED_BYTE));
     void* get_image(GLint level = 0,gl::GLenum fmt = gl::GLenum(GL_BGRA),
@@ -49,6 +51,9 @@ public:
     void setUnit(EngGLUniform&,const GLint&); //TODO: without EngGLUniform?
     void property(gl::GLenum,GLint);
     void property(gl::GLenum,GLfloat);
+    void property(gl::GLenum,const GLfloat*);
+    void property(gl::GLenum,const GLint*);
+    void property(gl::GLenum,const GLuint*);
     void setData (EngGLTexture*);
     void load();
     ~EngGLSampler();

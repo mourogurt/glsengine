@@ -1,20 +1,12 @@
 TEMPLATE = lib
 CONFIG += staticlib
+CONFIG -= qt
 INCLUDEPATH = ./include
 INCLUDEPATH += ../system/include
 HEADERS = ./include/engInit.hpp \
-    ./include/engShader.hpp \
-    ./include/engScene.hpp \
-    ./include/engValue.hpp \
-    ./include/engBuffer.hpp \
-    include/EngGLUBOTemplate.hpp \
-    include/engTexture.hpp
+    include/engGLBufferAllocator.hpp
 SOURCES = ./src/engInit.cpp \
-    ./src/engShader.cpp \
-    ./src/engScene.cpp \
-    ./src/engValue.cpp \
-    ./src/engBuffer.cpp \
-    src/engTexture.cpp
+    src/engGLBufferAllocator.cpp
 QMAKE_CXXFLAGS += -std=c++11
 #DEFINES += ENG_USE_CL
 
@@ -24,8 +16,6 @@ OTHER_FILES += \
 CONFIG(debug, debug|release){
     DEFINES += _DEBUG
 }
-
-#DESTDIR = ../lib
 
 copydata.commands = $(COPY_DIR) $$PWD/include $$OUT_PWD/../include/backend
 first.depends = $(first) copydata

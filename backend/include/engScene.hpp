@@ -25,7 +25,7 @@ public:
 
 private:
   std::vector<EngGLAttribute> attribs;
-  std::vector<EngGLShader> shaders;
+  std::vector<EngGLProgram> shaders;
   GLint VAO;
   Log log;
   Log errlog;

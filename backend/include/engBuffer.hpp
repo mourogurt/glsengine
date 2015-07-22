@@ -31,9 +31,9 @@ private:
 class EngGLVBO : public EngGLbuffer {
 public:
   EngGLVBO();
-  EngGLVBO(EngGLShader*, GLint locationi = -1);
-  EngGLVBO(EngGLShader*, std::string);
-  void setShader(EngGLShader*);
+  EngGLVBO(EngGLProgram*, GLint locationi = -1);
+  EngGLVBO(EngGLProgram*, std::string);
+  void setShader(EngGLProgram*);
   bool setLocation(std::string);
   bool setLocation(GLint);
   void bind(GLint vecsize = 4, gl::GLenum type = gl::GLenum(GL_FLOAT),
@@ -46,7 +46,7 @@ public:
   std::vector<std::string> getErrLog();
 private:
   GLint location;
-  EngGLShader* shader;
+  EngGLProgram* shader;
   static GLuint binded_vbo;
   Log log;
   Log errlog;
@@ -63,9 +63,9 @@ enum EngGLInfoType
 class EngGLUBO : public EngGLbuffer {
 public:
   EngGLUBO();
-  EngGLUBO(EngGLShader*, GLint locationi = -1);
-  EngGLUBO(EngGLShader*, std::string);
-  void setShader(EngGLShader*);
+  EngGLUBO(EngGLProgram*, GLint locationi = -1);
+  EngGLUBO(EngGLProgram*, std::string);
+  void setShader(EngGLProgram*);
   void setLocation(GLint locationi = -1);
   bool setLocation(std::string);
   unsigned int load(gl::GLenum type);
@@ -90,7 +90,7 @@ public:
 private:
   GLint location;
   GLuint bpoint;
-  EngGLShader* shader;
+  EngGLProgram* shader;
   static GLuint binded_ubo;
   GLint buff_size;
   std::vector<GLuint> indexes;

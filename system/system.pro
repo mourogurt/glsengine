@@ -1,5 +1,6 @@
 TEMPLATE = lib
 CONFIG += staticlib
+CONFIG -= qt
 INCLUDEPATH = ./include
 HEADERS = ./include/concurent_queue.hpp \
 	  ./include/log.hpp
