@@ -5,9 +5,6 @@
 #include <algorithm>
 #include "engInit.hpp"
 
-//TODO: Add methods to read/write to buffers
-//TODO: Add child classes that implement immutable/mutable methods
-//TODO: Think about iformat
 //TODO: Add logs to buffer
 class EngGLBuffer
 {
@@ -48,11 +45,13 @@ public:
     static void setParams(const GLsizeiptr pagesizea,const GLsizeiptr maxsizea);
     static EngGLBuffer* allocateImmut(GLsizeiptr size,unsigned flags, bool immutable,
                                             bool force, gl::GLenum &err);
-    static void releaseBuffer (const EngGLBuffer* id, gl::GLenum &err);
-    static GLvoid* getPagePtr(const EngGLBuffer* id, gl::GLenum &err);
-    static GLvoid* getBufPtr(const EngGLBuffer* id, gl::GLenum &err);
-    static void unmap (const EngGLBuffer* id);
+    static void releaseBuffer (EngGLBuffer* &id, gl::GLenum &err);
+    static GLvoid* getPagePtr(EngGLBuffer* id, gl::GLenum &err);
+    static GLvoid* getBufPtr(EngGLBuffer* id, gl::GLenum &err);
+    static void unmap (EngGLBuffer* id);
     static void clearAll();
+    static std::vector<std::string> getLog();
+    static std::vector<std::string> getErrLog();
 private:
     static void defrag();
     static void cleanUnused();

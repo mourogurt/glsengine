@@ -1,14 +1,17 @@
 TEMPLATE = lib
 CONFIG += staticlib
 CONFIG -= qt
-INCLUDEPATH = ./include
+INCLUDEPATH += ./include
 INCLUDEPATH += ../system/include
 HEADERS = ./include/engInit.hpp \
-    include/engGLBufferAllocator.hpp
+    include/engGLBufferAllocator.hpp \
+    include/engGLTextureAllocator.hpp \
+    include/engGLShaderAllocator.hpp
 SOURCES = ./src/engInit.cpp \
-    src/engGLBufferAllocator.cpp
+    src/engGLBufferAllocator.cpp \
+    src/engGLTextureAllocator.cpp \
+    src/engGLShaderAllocator.cpp
 QMAKE_CXXFLAGS += -std=c++11
-#DEFINES += ENG_USE_CL
 
 OTHER_FILES += \
     ../docs/roadmap.txt
